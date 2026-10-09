@@ -221,12 +221,12 @@ body[data-fond="sombre"] .rail span { color: var(--voile); }
 .style p { max-width: 40ch; color: var(--gris); margin-bottom: var(--e-3); }
 
 /* IV. dans le verre */
-.notes { min-height: 170vh; }
+.notes { min-height: 150vh; }   /* phase 3 : resserré, plus d'écran vide autour du versé */
 .notes .entete { text-align: center; margin-bottom: 6vh; }
 .notes .entete h2 { font-size: var(--t-h2); }
 .temps { display: grid; grid-template-columns: 1fr clamp(220px, 30vw, 480px) 1fr; gap: 2vw; max-width: var(--largeur-max); margin: 0 auto; }
-.temps .pile { display: flex; flex-direction: column; gap: 22vh; padding-top: 8vh; }
-.temps .pile.d { align-items: flex-end; padding-top: 62vh; }
+.temps .pile { display: flex; flex-direction: column; gap: 14vh; padding-top: 6vh; }
+.temps .pile.d { align-items: flex-end; padding-top: 34vh; }
 .note { max-width: 320px; }
 .note h4 { font: 800 var(--t-titre-s) / 1 var(--f-titre); font-variation-settings: var(--opsz-titre); text-transform: uppercase; margin: 6px 0 8px; }
 .note p { color: var(--gris); font-size: var(--t-petit); line-height: var(--lh-petit); }
@@ -482,15 +482,15 @@ html:not([data-js]) .ch[data-registre]::before { transform: none; }
 
 /* ---------- III · le sol (§2) ---------- */
 .ch.sol { padding: 0; min-height: 100vh; height: 100vh; }
-.sol .surface { position: absolute; top: 40vh; left: var(--pad); width: calc((100% - 2 * var(--pad)) * 0.64); height: 1.5px; background: var(--encre); }
-.sol .coupe-cadre { position: absolute; top: 40vh; left: var(--pad); width: calc((100% - 2 * var(--pad)) * 0.64 - 2.5vw); height: 54vh; overflow: hidden; }
+.sol .surface { position: absolute; top: 47vh; left: var(--pad); width: calc((100% - 2 * var(--pad)) * 0.64); height: 1.5px; background: var(--encre); }
+.sol .coupe-cadre { position: absolute; top: 47vh; left: var(--pad); width: calc((100% - 2 * var(--pad)) * 0.64 - 2.5vw); height: 48vh; overflow: hidden; }
 .sol .coupe { width: 100%; height: 100%; display: block; }
-.sol .regle { position: absolute; top: 40vh; height: 54vh; left: calc(var(--pad) + (100% - 2 * var(--pad)) * 0.64 - 2.5vw + 10px); border-left: var(--trait) solid var(--encre); color: var(--gris); }
+.sol .regle { position: absolute; top: 47vh; height: 48vh; left: calc(var(--pad) + (100% - 2 * var(--pad)) * 0.64 - 2.5vw + 10px); border-left: var(--trait) solid var(--encre); color: var(--gris); }
 .sol .regle span { position: absolute; left: 10px; transform: translateY(-50%); white-space: nowrap; }
 .sol .regle span::before { content: ""; position: absolute; left: -10px; top: 50%; width: 6px; height: 1px; background: var(--encre); }
 .sol .regle .regle-titre { top: -22px; left: -1px; transform: none; }
 .sol .regle .regle-titre::before { display: none; }
-.racines-leg { position: absolute; color: var(--oxyde); left: calc(var(--pad) + 20%); top: calc(94vh - 34px); max-width: 30ch; background: var(--papier); padding: 4px 8px; }
+.racines-leg { position: absolute; color: var(--oxyde); left: calc(var(--pad) + 20%); top: calc(95vh - 34px); max-width: 30ch; background: var(--papier); padding: 4px 8px; }
 .sol .texte { position: absolute; top: 12vh; right: var(--pad); width: calc((100% - 2 * var(--pad)) * 0.29); }
 .sol h2 { font-size: var(--t-h2-col); margin: 6px 0 18px; }
 .sol .chapeau { margin-bottom: 12px; }
@@ -517,7 +517,7 @@ html:not([data-js]) .ch[data-registre]::before { transform: none; }
 
 /* ---------- V · roue et profil (§2) ---------- */
 .ch.roue-ch { min-height: auto; padding: 12vh var(--pad); }
-.roue-grille { display: grid; grid-template-columns: 1.1fr 0.9fr 0.6fr; gap: 4vw; align-items: center; max-width: var(--largeur-max); margin: 0 auto; }
+.roue-grille { display: grid; grid-template-columns: 1fr 1fr 0.5fr; gap: 4vw; align-items: center; max-width: var(--largeur-max); margin: 0 auto; }
 .roue-fig { margin: 0; padding: 0 70px; }
 .roue { width: min(520px, 38vw); height: auto; display: block; margin: 0 auto; }
 .roue .anneau { stroke: var(--filet); }
@@ -534,7 +534,7 @@ html:not([data-js]) .ch[data-registre]::before { transform: none; }
 .crans { display: flex; gap: 4px; }
 .crans i { width: 14px; height: 14px; border: var(--trait) solid var(--encre); background: transparent; transition: background-color 160ms var(--ease-sortie), border-color 160ms var(--ease-sortie); }
 .crans i.plein { background: var(--vin); border-color: var(--vin); }
-.jauge em { font-family: var(--f-ital); font-size: 18px; }
+.jauge em { font-family: var(--f-ital); font-size: 18px; white-space: nowrap; }
 .note-releve { font-size: var(--t-petit); line-height: var(--lh-petit); color: var(--gris); max-width: 44ch; }
 
 /* ---------- VI · à table (§7) ---------- */
@@ -675,6 +675,7 @@ html[lang="en"] .critique blockquote p::after { content: "\201D"; }
   .piste-b { font-size: 22px; }
   .liaison { display: none; }
 
+  .sol .texte.feuille { padding: 20px; }
   .ch.sol { height: auto; min-height: 0; padding: var(--ch-haut) var(--pad) var(--ch-bas); display: flex; flex-direction: column; gap: var(--e-4); }
   .sol .surface, .sol .regle { display: none; }
   .sol .texte { position: static; width: auto; order: 1; }
@@ -749,7 +750,7 @@ html[lang="en"] .critique blockquote p::after { content: "\201D"; }
   .tete .droite .langues, .tete .droite .panier, .tete .droite .cta { display: none; }
   .tete .cta-court { display: inline-flex; min-height: 40px; padding: 0 var(--e-4); }
 
-  .ouverture { padding-top: 18svh; place-items: start center; }
+  .ouverture { padding-top: 11svh; place-items: start center; }
   .indice { display: none; }
 
   .notes { min-height: auto; }

@@ -12,7 +12,7 @@ const POSE: PoseChapitre = { x: 0.33, y: 0.02, r: 0, ry: 360, s: 0.8, label: 3 }
 export function Presse({ t }: { t: Dictionnaire["presse"] }) {
   return (
     <Chapitre id="presse" folio="XI" pose={POSE} registre className="presse">
-      <div className="presse-col">
+      <div className="presse-col feuille">
         <Surtitre folio="XI">{t.surtitre}</Surtitre>
         <h2 className="titre">{t.titreAvant}<span className="vin">{t.titreAccent}</span></h2>
         <p className="mono fiction">{t.mention}</p>

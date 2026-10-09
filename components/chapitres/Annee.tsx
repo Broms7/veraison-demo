@@ -23,7 +23,7 @@ export function Annee({ t }: { t: Dictionnaire["annee"] }) {
           {t.mois.map((m) => <span key={m.nom} className="mono">{m.nom[0]}</span>)}
         </div>
         <div className="piste">
-          <div className="panneau">
+          <div className="panneau feuille">
             <Surtitre folio="VIII">{t.surtitre}</Surtitre>
             <h2 className="titre">{t.titreAvant}<span className="vin">{t.titreAccent}</span></h2>
             <p className="chapeau">{t.chapeau}</p>

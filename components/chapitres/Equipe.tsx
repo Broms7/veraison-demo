@@ -22,9 +22,11 @@ export function Equipe({ t, portraits }: { t: Dictionnaire["equipe"]; portraits:
         </blockquote>
       </div>
       <div className="equipe-corps">
-        <Surtitre folio="IX">{t.surtitre}</Surtitre>
-        <h2 className="titre">{t.titreAvant}<span className="vin">{t.titreAccent}</span></h2>
-        <p className="chapeau">{t.chapeau}</p>
+        <div className="feuille">
+          <Surtitre folio="IX">{t.surtitre}</Surtitre>
+          <h2 className="titre">{t.titreAvant}<span className="vin">{t.titreAccent}</span></h2>
+          <p className="chapeau">{t.chapeau}</p>
+        </div>
         <div className="portraits">
           {t.membres.map((m, i) => {
             const src = m.image ? portraits[m.image] : null;

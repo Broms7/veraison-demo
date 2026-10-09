@@ -1,6 +1,7 @@
 // components/chapitres/Sol.tsx — III. Le sol (addendum §2, §3 T1).
-// La bouteille se tient debout dans la colonne gauche, échelle 0,62, le pied sur la ligne de surface
-// (40vh du haut de la section, cf. calcul de la pose dans l'addendum §1). La coupe se trace au scroll,
+// La bouteille se tient debout dans la colonne gauche, échelle 0,62, le pied sur la ligne de surface.
+// Écart à l'addendum §1 : la surface descend de 40vh à 47vh (coupe de 48vh pour 2 m), sinon le haut de la
+// bouteille sortait de l'écran. Pied à 47vh, hauteur 72vh × 0,62 = 44,6vh → centre à 24,7vh → y = −0,253. La coupe se trace au scroll,
 // couche par couche ; chaque ligne de légende s'allume quand sa couche est tracée, et le mot « fer »
 // passe de l'encre au vin quand les plaques de fer sont dessinées (Habillage.tsx, data-legende / data-fer).
 import { Chapitre, Surtitre } from "./Chapitre";
@@ -8,7 +9,7 @@ import { CoupeSol } from "@/components/illustrations/Traits";
 import type { PoseChapitre } from "@/lib/poses";
 import type { Dictionnaire } from "@/dictionnaires";
 
-const POSE: PoseChapitre = { x: -0.29, y: -0.32, r: 0, ry: 0, s: 0.62, label: 2 };
+const POSE: PoseChapitre = { x: -0.29, y: -0.253, r: 0, ry: 0, s: 0.62, label: 2 };
 // Groupe de tracé de chaque couche de la légende (ordre de la coupe : surface, graves + sables, argile, fer).
 const GROUPE_COUCHE = [0, 1, 1, 3, 2];
 
@@ -22,7 +23,7 @@ export function Sol({ t }: { t: Dictionnaire["sol"] }) {
         {t.graduations.map((g, i) => <span key={g} style={{ top: `${i * 25}%` }}>{g}</span>)}
       </div>
       <p className="mono racines-leg">{t.racines}</p>
-      <div className="texte">
+      <div className="texte feuille">
         <Surtitre folio="III">{t.surtitre}</Surtitre>
         <h2 className="titre" data-fer="">{t.titreAvant}<span className="vin">{t.titreAccent}</span></h2>
         <p className="chapeau">{t.chapeauAvant}<em>{t.chapeauMot}</em>{t.chapeauApres}</p>

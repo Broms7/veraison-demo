@@ -17,7 +17,7 @@ export function Venir({ t }: { t: Dictionnaire["venir"] }) {
     <Chapitre id="venir" folio="XIV" registre className="venir">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPage) }} />
       <div className="grille-v">
-        <div>
+        <div className="feuille">
           <Surtitre folio="XIV">{t.surtitre}</Surtitre>
           <h2 className="titre">{t.titreAvant}<span className="vin">{t.titreAccent}</span></h2>
           <p className="chapeau">{t.chapeau}</p>
@@ -25,7 +25,7 @@ export function Venir({ t }: { t: Dictionnaire["venir"] }) {
           <span className="mono bloc-titre">{t.distancesTitre}</span>
           <ul className="distances">{t.distances.map((d) => <li key={d}>{d}</li>)}</ul>
         </div>
-        <div>
+        <div className="feuille">
           <span className="mono bloc-titre">{t.horairesTitre}</span>
           <ul className="horaires">{t.horaires.map((h) => <li key={h}>{h}</li>)}</ul>
           <a className="btn" href="#resa">{t.cta}</a>
