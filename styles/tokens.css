@@ -1,0 +1,80 @@
+/* =============================================================
+   styles/tokens.css — TOKENS PROVISOIRES (phase 1, repris du wireframe)
+   -------------------------------------------------------------
+   Seul fichier à remplacer en phase 2 pour la direction artistique,
+   avec lib/polices.ts. Toutes les couleurs du site passent par ici,
+   y compris celles de la scène 3D et de l'étiquette (lues en JS
+   via getComputedStyle, cf. lib/tokens.ts).
+   ============================================================= */
+:root {
+  /* --- Papier et encre --- */
+  --papier: #ece6db;        /* fond dominant */
+  --papier-2: #e1d9ca;      /* fond en creux, sélection */
+  --papier-carte: #efe9dfcc;/* carte posée sur la bouteille */
+  --encre: #17120f;         /* texte */
+  --gris: #6b635a;          /* texte secondaire */
+  --filet: #cfc5b3;         /* filets */
+  --hachure: #d3c9b6;       /* hachures des emplacements visuels */
+  --desactive: #b9ae9c;     /* jours fermés du calendrier */
+
+  /* --- Vin --- */
+  --bordeaux: #4a0e19;      /* cadre, pied de page */
+  --vin: #7d1a2b;           /* accent */
+  --vin-clair: #a33246;
+  --vin-pale: #c98b8f;
+
+  /* --- Nuit (chapitre inversé, pied) --- */
+  --nuit: #120c0d;
+  --creme: #efe7da;         /* texte sur fond sombre */
+  --creme-doux: #c9bcb4;    /* texte secondaire sur nuit */
+  --creme-pied: #d8c4c0;    /* texte secondaire sur bordeaux */
+  --rose-sourd: #c9aaa6;    /* libellés sur bordeaux */
+  --gris-nuit: #9c8f88;
+  --hachure-nuit-1: #1c1314;
+  --hachure-nuit-2: #2a1c1e;
+  --filet-nuit: #3a2a2c;
+
+  /* --- Silhouettes plates (millésimes, allocation) --- */
+  --silhouette: #b7ad9d;
+  --silhouette-capsule: #9d9282;
+  --bois: #d9ccb4;
+  --bois-clair: #e6dac4;
+  --bois-trait: #a8977a;
+
+  /* --- Scène 3D (lues par lib/tokens.ts). En hex, rgb() ou hsl() : THREE.Color ne lit pas oklch(). --- */
+  --3d-verre: #18221b;      /* verre vert-noir de la bouteille */
+  --3d-capsule: #7a1a2a;    /* capsule bordeaux */
+  --3d-vin: #6d1424;        /* vin dans le verre et filet */
+  --3d-verre-a-pied: #f4efe6; /* verre à dégustation */
+  --3d-halo: #c4553f;       /* halo du contre-jour */
+  --3d-etiquette: #e9e1d1;  /* papier de l'étiquette */
+
+  /* --- Mesures --- */
+  --cadre: 10px;            /* épaisseur du cadre bordeaux */
+  --cadre-rayon: 14px;
+  --pad: clamp(20px, 5vw, 88px);
+  --colonne-bouteille: clamp(220px, 24vw, 400px); /* colonne centrale réservée */
+  --hauteur-bouteille: 72vh; /* hauteur de base de la bouteille (pose s = 1) */
+
+  /* --- Échelle typographique --- */
+  --t-hero: clamp(90px, 20.5vw, 380px);
+  --t-porte: clamp(64px, 13vw, 190px);
+  --t-h2: clamp(52px, 6.5vw, 112px);
+  --t-h3: clamp(40px, 4.4vw, 72px);
+  --t-chiffre: 44px;
+  --t-titre-s: 30px;
+  --t-surtitre: 19px;
+  --t-corps: 15px;
+  --t-mono: 11px;
+  --t-geant: 24vw;
+
+  /* --- Polices : variables posées par lib/polices.ts --- */
+  --f-titre: var(--police-titre), Impact, sans-serif;
+  --f-ital: var(--police-ital), Georgia, serif;
+  --f-corps: var(--police-corps), system-ui, sans-serif;
+  --f-mono: var(--police-mono), ui-monospace, monospace;
+
+  /* --- Mouvement --- */
+  --ease-iris: cubic-bezier(0.7, 0, 0.2, 1);
+  --duree-iris: 1.6s;
+}

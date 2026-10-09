@@ -1,0 +1,221 @@
+// dictionnaires/fr.ts — textes français (provisoires, repris du wireframe validé).
+// La forme de cet objet sert de type de référence : en.ts doit la respecter à l'identique.
+
+export const fr = {
+  meta: {
+    titre: "Véraison 2021 — Clos Ferrugine, Pomerol",
+    description:
+      "Véraison, cuvée du Clos Ferrugine sur le plateau de Pomerol. 1 200 bouteilles numérotées. Allocation du millésime 2021 et dégustations au domaine.",
+  },
+  porte: {
+    domaine: "Clos Ferrugine — Pomerol",
+    titre: "Véraison",
+    question: "Avez-vous l'âge légal pour consommer de l'alcool dans votre pays ?",
+    oui: "Oui, entrer",
+    non: "Non",
+    refus: "Revenez nous voir dans quelques années.",
+  },
+  tete: {
+    menu: "Ouvrir le menu",
+    marque: "FERRUGINE",
+    marqueSous: "CLOS · POMEROL",
+    allocation: "Allocation",
+    reserver: "Réserver une dégustation",
+    langue: "Langue",
+    sommaire: "Sommaire",
+  },
+  rail: "Niveau",
+  sommaire: [
+    { ancre: "ouverture", titre: "I · Ouverture" },
+    { ancre: "cuvee", titre: "II · La cuvée" },
+    { ancre: "geste", titre: "III · Le geste" },
+    { ancre: "verre", titre: "IV · Dans le verre" },
+    { ancre: "table", titre: "V · À table" },
+    { ancre: "domaine", titre: "VI · Le domaine" },
+    { ancre: "millesimes", titre: "VII · Les millésimes" },
+    { ancre: "allocation", titre: "VIII · Allocation" },
+    { ancre: "resa", titre: "IX · Au domaine" },
+    { ancre: "journal", titre: "X · Journal" },
+  ],
+  ouverture: {
+    surtitre: "Clos Ferrugine, plateau de Pomerol",
+    titre: "Véraison",
+    gauche: "Rouge · Merlot, cabernet franc",
+    droite: "Millésime MMXXI",
+    indice: "Défiler pour déboucher",
+    sceau: "CLOS FERRUGINE · POMEROL · MMXXI ·",
+  },
+  cuvee: {
+    surtitre: "La cuvée",
+    titre: ["Véraison", "MMXXI"],
+    texte:
+      "Deux hectares et demi de merlot et de cabernet franc sur la crasse de fer du plateau de Pomerol, à trois kilomètres de Libourne. Vendangé à la main sur onze matins, élevé dix-huit mois en barriques de chêne français, un tiers neuves. Ni collé, ni filtré.",
+    ajouter: "Ajouter à mon allocation",
+    lire: "Lire",
+    lignes: [
+      {
+        libelle: "Degré · alcool en volume",
+        chiffre: "14%",
+        texte: "Le fruit porte l'alcool, pas l'inverse.",
+        tiroir:
+          "Quatorze degrés, c'est ce que donne le merlot du plateau quand on attend sa pleine maturité sans la dépasser. Le vin n'est ni chaptalisé ni désalcoolisé : le degré est celui de la vendange.",
+      },
+      {
+        libelle: "Élevage · mois en barrique",
+        chiffre: "18",
+        texte: "Chêne français, un tiers neuf, deux tiers d'un et deux vins.",
+        tiroir:
+          "Dix-huit mois en barriques de 225 litres, au chai, sans soutirage les six premiers mois. Le bois neuf reste minoritaire : il doit tenir le vin, pas le parfumer.",
+      },
+      {
+        libelle: "Assemblage · merlot / cabernet franc",
+        chiffre: "85",
+        texte: "15 de cabernet franc, sur les sables.",
+        tiroir: "",
+      },
+      {
+        libelle: "Garde · à boire entre",
+        chiffre: "2028",
+        texte: "et 2045. Carafer une heure avant.",
+        tiroir:
+          "Fermé dans sa jeunesse, le vin s'ouvre vers sept ans. Servir à 16 °C, carafé une heure. Les bouteilles se gardent couchées, à l'abri de la lumière, autour de 13 °C.",
+      },
+    ],
+  },
+  geste: {
+    video: "Vignette vidéo · Kling — la vigneronne au chai, plan taille",
+    lireVideo: "Lire la vidéo",
+    videoTitre: "Claire Dussol, vigneronne",
+    videoAttente: "Vidéo Kling à venir — 1 min 40, sous-titrée.",
+    legende: "Écouter Claire Dussol, vigneronne — 1 min 40",
+    surtitre: "Le style",
+    titreAvant: "Petit plateau,",
+    titreMilieu: "grand ",
+    titreAccent: "merlot",
+    paragraphes: [
+      "Pomerol n'a jamais eu de classement et n'en veut pas : quelques familles, des parcelles grandes comme un jardin, et le merlot comme langue maternelle.",
+      "Mille deux cents bouteilles par an. Pas une de plus : deux hectares et demi n'en donnent pas davantage quand on les vendange ainsi.",
+    ],
+  },
+  verre: {
+    surtitre: "Dans le verre",
+    titre: "Trois temps",
+    notes: [
+      { num: "01 · L'attaque", titre: "Mûre, prune, violette", texte: "Le fruit d'abord, frais, presque croquant. La violette arrive après vingt minutes d'air." },
+      { num: "03 · La finale", titre: "Réglisse, tanins fins", texte: "Quarante secondes en bouche. Le tanin est serré mais poli : il tient sans accrocher." },
+      { num: "02 · Le milieu", titre: "Truffe, graphite", texte: "Le vin se resserre, devient minéral, presque sanguin. C'est la crasse de fer qui parle." },
+    ],
+  },
+  table: {
+    photo: "Photo · Kling — magret sur la braise, cèpes, verre posé, lumière rasante, vue en plongée",
+    surtitre: "À table",
+    titreAvant: "Braise, cèpes",
+    titreAccent: "patience",
+    texte:
+      "Il veut du gras, du sel et du temps. Agneau de Pauillac rosé, lamproie à la bordelaise, cèpes à la persillade, un vieux comté. Évitez le poisson grillé : il ne l'entendrait pas.",
+    cta: "Voir les accords",
+  },
+  domaine: {
+    fond: "Plein cadre · Kling (vidéo 6 s en boucle) — plateau de Pomerol à l'aube, clocher dans la brume",
+    surtitre: "Le domaine",
+    titre: ["Onze matins", "de vendange"],
+    texte:
+      "Les parcelles tiennent sur le plateau, entre le clocher de Pomerol et la route de Catusseau, sur une argile bleue tachée de fer. On vendange avant que le soleil ne chauffe les grappes, en cagettes de douze kilos, avec la même équipe depuis 2009.",
+    chiffres: [
+      { valeur: "2,5 ha", libelle: "de vignes" },
+      { valeur: "11", libelle: "matins" },
+      { valeur: "1 200", libelle: "bouteilles" },
+    ],
+  },
+  millesimes: {
+    surtitre: "Les millésimes",
+    titreAvant: "Six années,",
+    titreMilieu: "un ",
+    titreAccent: "sol",
+    fermer: "Fermer",
+    annees: [
+      { annee: "2016", note: "Solaire, à ouvrir", statut: "Dernières", fiche: "Un été sec et chaud, une vendange précoce. Le plus ouvert de la lignée : on peut le boire dès maintenant, carafé." },
+      { annee: "2017", note: "Gel d'avril : 400 bouteilles", statut: "Épuisé", fiche: "La nuit du 27 avril a pris deux tiers de la récolte. Quatre cents bouteilles seulement, toutes parties." },
+      { annee: "2018", note: "Mildiou, puis grand été", statut: "Dernières", fiche: "Un printemps humide qu'il a fallu tenir rang par rang, puis un été magnifique. Un vin dense, à attendre encore trois ans." },
+      { annee: "2019", note: "Classique, à attendre", statut: "Disponible", fiche: "L'année de référence du domaine : équilibre, fraîcheur, tanins fins. À garder jusqu'en 2040." },
+      { annee: "2020", note: "Concentré, dense", statut: "Épuisé", fiche: "Petits rendements, baies serrées. Un vin puissant, sorti en primeur et vendu en trois semaines." },
+    ],
+  },
+  allocation: {
+    surtitre: "Allocation 2021 :",
+    titreAvant: "1 200 bouteilles, ",
+    titreAccent: "pas une de plus",
+    ajouter: "Ajouter",
+    ajoute: "Ajouté",
+    formats: [
+      { id: "caisse", nom: "Caisse bois · 6", note: "Douze caisses", prix: 630 },
+      { id: "magnum", nom: "Magnum 1,5 L", note: "Quarante, numérotés", prix: 280 },
+      { id: "bouteille", nom: "La bouteille · 75 cl", note: "La sortie", prix: 110 },
+      { id: "demi", nom: "Demi · 37,5 cl", note: "Au chai seulement", prix: 58 },
+      { id: "coffret", nom: "Coffret dégustation", note: "Avec la visite", prix: 95 },
+    ],
+  },
+  resa: {
+    surtitre: "Au domaine",
+    titreAvant: "Goûtez-le",
+    titreMilieu: "où il ",
+    titreAccent: "pousse",
+    intro:
+      "Du mardi au samedi, sur rendez-vous. Claire ou Paul vous reçoivent au chai, en petit groupe : huit personnes au plus. Route de Catusseau, 33500 Pomerol.",
+    formulesLibelle: "Formule",
+    formules: [
+      { id: "decouverte", num: "01", nom: "La découverte", meta: "45 min · trois millésimes au chai", prix: 25 },
+      { id: "chai", num: "02", nom: "Le chai", meta: "1 h 30 · visite, cinq vins dont un sur barrique", prix: 60 },
+      { id: "table", num: "03", nom: "La longue table", meta: "3 h · vendanges du matin, déjeuner vigneron", prix: 150 },
+    ],
+    date: "Date",
+    ferme: "Fermé dimanche et lundi",
+    creneau: "Créneau",
+    creneaux: [
+      { id: "1030", libelle: "10 h 30", complet: false },
+      { id: "1400", libelle: "14 h 00", complet: false },
+      { id: "1630", libelle: "16 h 30", complet: true },
+    ],
+    complet: "complet",
+    personnes: "Personnes",
+    moins: "Retirer une personne",
+    plus: "Ajouter une personne",
+    pers: "pers.",
+    aChoisir: "Choisissez une date",
+    ouvrirAgenda: "Choisir date et créneau",
+    fermerAgenda: "Valider",
+    reserver: "Réserver la dégustation",
+    confirmationTitre: "Demande enregistrée",
+    confirmationTexte: "Réservation simulée : aucun paiement, aucune donnée envoyée. Sur le vrai site, Claire ou Paul vous confirmeraient le rendez-vous par e-mail.",
+    fermer: "Fermer",
+  },
+  journal: {
+    surtitre: "Journal",
+    titre: "Carnet de chai",
+    tout: "Tout le journal",
+    articles: [
+      { photo: "Photo · Kling — sarments taillés, givre", meta: "Janvier · 4 min", titre: "La taille d'hiver, rang par rang" },
+      { photo: "Photo · Kling — bougies anti-gel dans les rangs", meta: "Avril 2017 · 6 min", titre: "La nuit où le gel a pris deux tiers" },
+      { photo: "Photo · Kling — clocher de Pomerol, vignes", meta: "Pomerol · 5 min", titre: "Pourquoi Pomerol refuse tout classement" },
+    ],
+  },
+  pied: {
+    lettreTitre: "La lettre des vendanges",
+    lettreTexte: "Une lettre par an, le jour où le millésime sort. Rien d'autre.",
+    email: "Votre e-mail",
+    inscrire: "S'inscrire",
+    inscrit: "Inscription simulée : rien n'a été envoyé.",
+    colonnes: [
+      { titre: "Venir", liens: ["Dégustations", "La longue table", "Accès"] },
+      { titre: "Acheter", liens: ["Allocation", "Cavistes", "Offrir"] },
+      { titre: "Lire", liens: ["Journal", "Millésimes", "Presse"] },
+    ],
+    evin: "L'abus d'alcool est dangereux pour la santé, à consommer avec modération.",
+    credit: "© 2026 Clos Ferrugine — domaine fictif, concept Kaïro",
+    geant: "Ferrugine",
+  },
+  repli: "Bouteille de Véraison 2021, Clos Ferrugine",
+};
+
+/** Forme commune des dictionnaires (déduite du français). */
+export type Dictionnaire = typeof fr;
