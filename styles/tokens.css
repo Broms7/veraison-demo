@@ -131,6 +131,27 @@
   --z-tiroir: 25;                       /* Sheet, Drawer, Dialog + leur voile : sous le cadre */
   --z-cadre: 30;
   --z-porte: 40;
+
+  /* --- Phase 3 (design-spec-addendum §10) --- */
+  /* Illustrations au trait */
+  --trait-dessin: 1.5px;
+  --hachure-pas: 6px;
+  --ease-trace: cubic-bezier(0.65, 0, 0.35, 1);   /* tracé déclenché : mouvement à l'écran */
+  --d-trace: 900ms;
+  --decalage-trace: 120ms;
+  --d-compteur: 1200ms;
+  --d-encre-seche: 400ms;                        /* mot accent encre → vin */
+  /* Transitions */
+  --anneau-iris: 1.6vmax;
+  --filet-rideau: 10px;                          /* = --cadre */
+  --voile-texte-video: rgb(20 12 14 / 0.85);     /* sous le texte de VII et la planche */
+  /* Bandeau */
+  --d-bandeau: 90s;
+  --bandeau-h: 56px;
+  /* Section épinglée */
+  --annee-ouverture: 44vw;
+  --annee-panneau: 26vw;
+  --z-regle-mois: 7;                             /* au-dessus de .front, sous l'en-tête */
 }
 
 /* Tablette : 760–1099 px — grille à 3 colonnes resserrée */
@@ -157,5 +178,7 @@
     --ch-haut: 46svh;                   /* fenêtre libre pour la pose de la bouteille */
     --ch-bas: 8svh;
     --z-bouteille: 0;                   /* derrière les feuilles de texte */
+    --bandeau-h: 44px;
+    --annee-panneau: 82vw;
   }
 }

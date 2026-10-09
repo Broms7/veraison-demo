@@ -1,6 +1,6 @@
 // components/chapitres/Cuvee.tsx — II. La cuvée : fiche technique à quatre chiffres-héros (§3.5).
 // Pose droite, étiquette imprimée jusqu'à l'étape ② (nom + millésime). La carte passe DEVANT la bouteille.
-import { Chapitre } from "./Chapitre";
+import { Chapitre, Surtitre } from "./Chapitre";
 import { BoutonAjout, Tiroir } from "@/components/ilots/Ilots";
 import type { PoseChapitre } from "@/lib/poses";
 import type { Dictionnaire } from "@/dictionnaires";
@@ -9,14 +9,17 @@ const POSE: PoseChapitre = { x: 0, y: 0, r: 0, s: 1, label: 2 };
 
 export function Cuvee({ t }: { t: Dictionnaire["cuvee"] }) {
   return (
-    <Chapitre id="cuvee" pose={POSE} className="fiche">
+    <Chapitre id="cuvee" folio="II" pose={POSE} registre className="fiche">
       <div className="grille3">
         <div className="col-g feuille">
-          <p className="surtitre">{t.surtitre}</p>
+          <Surtitre folio="II">{t.surtitre}</Surtitre>
           <h2 className="titre">{t.titre[0]}<br /><span className="vin">{t.titre[1]}</span></h2>
           <p className="chapeau" data-apparition="">{t.texte}</p>
           <div data-apparition=""><BoutonAjout libelle={t.ajouter} className="btn btn-secondaire" /></div>
         </div>
+        {/* Filet de liaison (addendum §7) : ce qu'on lit sur la bouteille = ce que dit la fiche.
+            Il passe DERRIÈRE la bouteille (couche contenu), dans la colonne centrale. */}
+        <div className="liaison" aria-hidden="true"><span className="mono">{t.liaison[0]}</span><span className="mono">{t.liaison[1]}</span></div>
         <div className="col-d">
           <div className="carte carte-papier front" data-apparition="0.1">
             {t.lignes.map((l) => (

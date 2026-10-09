@@ -2,7 +2,7 @@
 // La pose « dock » est lue en direct sur le rect du slot (lib/poses.ts) : la bouteille devient un
 // format parmi les autres (dessinés au trait), puis défile avec la page. Le tampon ④ tombe à l'arrivée.
 // Sur mobile, seul le titre est dans une feuille : le slot doit rester transparent.
-import { Chapitre } from "./Chapitre";
+import { Chapitre, Surtitre } from "./Chapitre";
 import { BoutonAjout } from "@/components/ilots/Ilots";
 import { ReleveBouteille, ReleveCaisse, ReleveCoffret } from "./Releves";
 import type { PoseChapitre } from "@/lib/poses";
@@ -24,9 +24,9 @@ function Objet({ id }: { id: string }) {
 export function Allocation({ t, langue }: { t: Dictionnaire["allocation"]; langue: Langue }) {
   const prix = new Intl.NumberFormat(langue === "fr" ? "fr-FR" : "en-GB", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
   return (
-    <Chapitre id="allocation" pose={POSE} className="allocation">
+    <Chapitre id="allocation" folio="XII" pose={POSE} registre className="allocation">
       <div className="feuille">
-        <p className="surtitre">{t.surtitre}</p>
+        <Surtitre folio="XII">{t.surtitre}</Surtitre>
         <h2 className="titre">{t.titreAvant}<span className="vin">{t.titreAccent}</span></h2>
       </div>
       <div className="formats">
@@ -50,6 +50,8 @@ export function Allocation({ t, langue }: { t: Dictionnaire["allocation"]; langu
           </div>
         ))}
       </div>
+      {/* Relevé d'allocation : une ligne de faits, aucun compteur de stock (addendum §7) */}
+      <p className="mono releve-alloc">{t.releve}</p>
     </Chapitre>
   );
 }

@@ -2,7 +2,7 @@
 // le filet coule et le verre se remplit au scroll (remonter le vide). Chapitre long (170vh).
 // Taches et anneau retirés (brand-direction) : les notes sont des cartes .front, c'est leur fond
 // qui crée le premier plan devant la bouteille.
-import { Chapitre } from "./Chapitre";
+import { Chapitre, Surtitre } from "./Chapitre";
 import type { PoseChapitre } from "@/lib/poses";
 import type { Dictionnaire } from "@/dictionnaires";
 
@@ -24,9 +24,9 @@ export function DansLeVerre({ t }: { t: Dictionnaire["verre"] }) {
   // Ordre du wireframe : attaque et finale à gauche, milieu à droite plus bas.
   const [attaque, finale, milieu] = t.notes;
   return (
-    <Chapitre id="verre" pose={POSE} className="notes">
+    <Chapitre id="verre" folio="V" pose={POSE} registre className="notes">
       <div className="entete feuille">
-        <p className="surtitre">{t.surtitre}</p>
+        <Surtitre folio="V">{t.surtitre}</Surtitre>
         <h2 className="titre">{t.titreAvant}<span className="vin">{t.titreAccent}</span></h2>
       </div>
       <div className="temps">
