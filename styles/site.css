@@ -53,9 +53,10 @@ body[data-porte="fermee"] { overflow: hidden; }
   display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: var(--e-3) var(--e-4);
   border: var(--trait) solid var(--encre); background: transparent; color: var(--encre); border-radius: var(--r-0);
   font: 600 10px/1 var(--f-corps); letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer;
-  transition: background-color var(--d-ui) var(--ease-sortie), color var(--d-ui) var(--ease-sortie);
+  transition: background-color var(--d-ui) var(--ease-sortie), color var(--d-ui) var(--ease-sortie), transform var(--d-tampon) var(--ease-sortie);
 }
 .btn-contour:hover { background: var(--encre); color: var(--papier); }
+.btn-contour:active, .media-pause:active, .pas button:active:not(:disabled) { transform: scale(0.98); }
 .lien {
   position: relative; display: inline-block; background: none; border: 0; padding: 0 0 3px; color: inherit; cursor: pointer;
   font: 600 11px/1 var(--f-corps); letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none;
@@ -369,7 +370,8 @@ body[data-fond="sombre"] .rail span { color: var(--voile); }
 .article { text-decoration: none; display: block; }
 .article .media { aspect-ratio: 4 / 5; margin-bottom: 14px; }
 .article .media img { transition: transform var(--d-texte) var(--ease-sortie); }
-.article:hover .media img { transform: scale(1.03); }
+/* Agrandissement réservé aux souris : sur tactile, le survol se déclencherait au toucher. */
+@media (hover: hover) and (pointer: fine) { .article:hover .media img { transform: scale(1.03); } }
 .article h4 { font: 800 26px/1.05 var(--f-titre); font-variation-settings: var(--opsz-titre); text-transform: uppercase; margin-top: 6px; transition: color var(--d-ui) var(--ease-sortie); }
 .article:hover h4 { color: var(--vin); }
 .article .mono { color: var(--gris); }

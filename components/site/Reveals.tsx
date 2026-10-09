@@ -9,11 +9,13 @@
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
+import { CustomEase } from "gsap/CustomEase";
 import { useGSAP } from "@gsap/react";
 
-gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
+gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText, CustomEase);
 
-const EASE = "power3.out";   // proche de --ease-sortie (0.2, 0.7, 0.2, 1)
+// Courbe exacte de --ease-sortie (design-spec §1.1) : JS et CSS bougent de la même façon.
+const EASE = CustomEase.create("sortie", "0.2,0.7,0.2,1");
 const DEPART = "top 85%";
 
 export function Reveals() {

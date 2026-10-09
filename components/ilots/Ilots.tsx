@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { gsap } from "gsap";
 import { SplitText } from "gsap/SplitText";
+import { CustomEase } from "gsap/CustomEase";
 import { useGSAP } from "@gsap/react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useSite } from "@/components/site/Fournisseur";
@@ -12,7 +13,8 @@ import { abonner, etat } from "@/lib/moteur";
 import { usePauseScroll } from "@/lib/scroll";
 import { useMouvementReduit } from "@/lib/media";
 
-gsap.registerPlugin(useGSAP, SplitText);
+gsap.registerPlugin(useGSAP, SplitText, CustomEase);
+const EASE_SORTIE = CustomEase.create("sortie", "0.2,0.7,0.2,1");   // = --ease-sortie
 
 /** Ajoute une unité au panier d'allocation (§3.3 bouton contour) : « Ajouté · n » pendant 1,6 s. */
 export function BoutonAjout({ libelle, libelleAjoute, className = "btn-contour" }: { libelle: string; libelleAjoute?: string; className?: string }) {
@@ -118,7 +120,7 @@ export function TitreOuverture({ texte }: { texte: string }) {
     const split = SplitText.create(ref.current, { type: "chars", mask: "chars" });
     // L'interligne de 0,86 couperait les accents (le É) : on agrandit chaque masque vers le haut.
     split.masks.forEach((m) => { (m as HTMLElement).style.paddingTop = "0.3em"; (m as HTMLElement).style.marginTop = "-0.3em"; });
-    gsap.from(split.chars, { yPercent: 105, duration: 0.8, ease: "power3.out", stagger: 0.04, delay: 0.9 });
+    gsap.from(split.chars, { yPercent: 105, duration: 0.8, ease: EASE_SORTIE, stagger: 0.04, delay: 0.9 });
   }, { dependencies: [entree], scope: ref });
   return <h1 ref={ref} className="titre titre-ouverture">{texte}</h1>;
 }

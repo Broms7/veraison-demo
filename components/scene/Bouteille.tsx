@@ -68,12 +68,14 @@ function BouteilleGLB({ url, mobile }: { url: string; mobile: boolean }) {
     geo.applyMatrix4(maillage.matrixWorld);   // la quantification range une échelle dans le nœud
     return normaliser(geo);
   }, [scene]);
+  useEffect(() => () => forme.geo.dispose(), [forme]);   // la géométrie clonée est à nous : on la libère
   return <Corps forme={forme} mobile={mobile} />;
 }
 
 /** Forme procédurale : repli quand aucun GLB n'est déposé. */
 function BouteilleProcedurale({ mobile }: { mobile: boolean }) {
   const forme = useMemo(() => formeProcedurale(), []);
+  useEffect(() => () => forme.geo.dispose(), [forme]);
   return <Corps forme={forme} mobile={mobile} />;
 }
 
