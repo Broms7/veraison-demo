@@ -34,7 +34,7 @@ function useMobile() {
 interface Choix { date: Date | undefined; creneau: string; personnes: number }
 
 /** Date, créneau, nombre de personnes : en ligne sur desktop, dans le Drawer sur mobile. */
-function Agenda({ t, langue, choix, setChoix }: { t: T; langue: Langue; choix: Choix; setChoix: (c: Choix) => void }) {
+function Agenda({ t, langue, choix, maj }: { t: T; langue: Langue; choix: Choix; maj: (partiel: Partial<Choix>) => void }) {
   const monte = useMonte();
   // Jours fermés : passés, dimanche (0) et lundi (1). La date du jour n'est lue que dans le
   // navigateur (monte) : au prérendu statique, elle serait figée à la date du build.
@@ -52,7 +52,7 @@ function Agenda({ t, langue, choix, setChoix }: { t: T; langue: Langue; choix: C
           mode="single"
           locale={langue === "fr" ? localeFr : enUS}
           selected={choix.date}
-          onSelect={(date) => setChoix({ ...choix, date })}
+          onSelect={(date) => maj({ date })}
           disabled={fermes}
           className="calendrier"
         />
@@ -67,7 +67,7 @@ function Agenda({ t, langue, choix, setChoix }: { t: T; langue: Langue; choix: C
         aria-labelledby="libelle-creneau"
         value={choix.creneau}
         // Radix renvoie "" si on reclique l'élément actif : on garde alors le choix courant.
-        onValueChange={(v) => v && setChoix({ ...choix, creneau: v })}
+        onValueChange={(v) => v && maj({ creneau: v })}
       >
         {t.creneaux.map((c) => (
           <ToggleGroupItem key={c.id} value={c.id} className="chip" disabled={c.complet}>
@@ -79,10 +79,10 @@ function Agenda({ t, langue, choix, setChoix }: { t: T; langue: Langue; choix: C
       <div className="mono ag-label">{t.personnes}</div>
       <div className="pas">
         <button type="button" aria-label={t.moins} disabled={choix.personnes <= PERSONNES_MIN}
-          onClick={() => setChoix({ ...choix, personnes: Math.max(PERSONNES_MIN, choix.personnes - 1) })}>−</button>
+          onClick={() => maj({ personnes: Math.max(PERSONNES_MIN, choix.personnes - 1) })}>−</button>
         <output aria-live="polite">{choix.personnes}</output>
         <button type="button" aria-label={t.plus} disabled={choix.personnes >= PERSONNES_MAX}
-          onClick={() => setChoix({ ...choix, personnes: Math.min(PERSONNES_MAX, choix.personnes + 1) })}>+</button>
+          onClick={() => maj({ personnes: Math.min(PERSONNES_MAX, choix.personnes + 1) })}>+</button>
       </div>
     </div>
   );
@@ -94,6 +94,8 @@ export function ParcoursReservation({ t, langue }: { t: T; langue: Langue }) {
   const [choix, setChoix] = useState<Choix>({ date: undefined, creneau: t.creneaux[0].id, personnes: 2 });
   const [tiroir, setTiroir] = useState(false);
   const [confirme, setConfirme] = useState(false);
+  // Mise à jour fonctionnelle : deux actions rapprochées ne s'écrasent pas (pas de copie périmée de l'état).
+  const maj = (partiel: Partial<Choix>) => setChoix((c) => ({ ...c, ...partiel }));
   usePauseScroll(tiroir || confirme);
 
   const formule = t.formules.find((f) => f.id === formuleId) ?? t.formules[0];
@@ -129,12 +131,12 @@ export function ParcoursReservation({ t, langue }: { t: T; langue: Langue }) {
             <DrawerTrigger className="btn ouvrir-agenda">{t.ouvrirAgenda}</DrawerTrigger>
             <DrawerContent className="tiroir-agenda">
               <DrawerTitle className="titre">{formule.nom}</DrawerTitle>
-              <Agenda t={t} langue={langue} choix={choix} setChoix={setChoix} />
+              <Agenda t={t} langue={langue} choix={choix} maj={maj} />
               <DrawerClose className="btn btn-vin">{t.fermerAgenda}</DrawerClose>
             </DrawerContent>
           </Drawer>
         ) : (
-          <Agenda t={t} langue={langue} choix={choix} setChoix={setChoix} />
+          <Agenda t={t} langue={langue} choix={choix} maj={maj} />
         )}
 
         <div className="recap">

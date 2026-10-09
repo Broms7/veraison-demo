@@ -70,6 +70,8 @@ export function TitreOuverture({ texte }: { texte: string }) {
   useGSAP(() => {
     if (!entree || !ref.current || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const split = SplitText.create(ref.current, { type: "chars", mask: "chars" });
+    // L'interligne de 0,82 couperait les accents (le É) : on agrandit chaque masque vers le haut.
+    split.masks.forEach((m) => { (m as HTMLElement).style.paddingTop = "0.3em"; (m as HTMLElement).style.marginTop = "-0.3em"; });
     gsap.from(split.chars, { yPercent: 105, duration: 1.1, ease: "power4.out", stagger: 0.06, delay: 0.7 });
   }, { dependencies: [entree], scope: ref });
   return <h1 ref={ref} className="titre titre-ouverture">{texte}</h1>;

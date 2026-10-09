@@ -95,6 +95,9 @@ export function demarrerMoteur(): () => void {
     abonnes.forEach((fn) => fn(ms));
   }
 
+  // En développement, l'état est lisible depuis la console (window.__veraison) pour mesurer au pixel.
+  if (process.env.NODE_ENV !== "production") Object.assign(window, { __veraison: etat });
+
   mesurer();
   gsap.ticker.add(tick);
   gsap.ticker.lagSmoothing(0);

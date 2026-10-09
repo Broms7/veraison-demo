@@ -26,8 +26,8 @@ function textureHalo() {
   canvas.width = canvas.height = 256;
   const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
   const g = ctx.createRadialGradient(128, 128, 0, 128, 128, 128);
-  g.addColorStop(0, avecAlpha(lireToken("--3d-halo"), 0.4));
-  g.addColorStop(0.4, avecAlpha(lireToken("--vin"), 0.13));
+  g.addColorStop(0, avecAlpha(lireToken("--3d-halo"), 0.6));
+  g.addColorStop(0.4, avecAlpha(lireToken("--vin"), 0.22));
   g.addColorStop(0.68, avecAlpha(lireToken("--vin"), 0));
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, 256, 256);

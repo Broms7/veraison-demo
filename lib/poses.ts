@@ -29,6 +29,7 @@ export const CLES = ["x", "y", "r", "ry", "s", "label", "sil", "pour"] as const;
 export const LARGEUR_MOBILE = 760;   // en dessous : chorégraphie simplifiée
 const MOBILE_X = 0.1;                // la bouteille reste presque centrée…
 const MOBILE_S = 0.7;                // …et réduite, derrière le texte
+const MOBILE_VERSE_X = 0.22;         // au versé, décalage à droite : sinon le verre sort de l'écran à gauche
 
 export const borne = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 export const lisse = (t: number) => t * t * (3 - 2 * t); // smoothstep
@@ -45,7 +46,9 @@ export function poseCible(p: PoseChapitre, vue: Vue, slot: Rect | null, hauteurB
   }
   const mobile = vue.l < LARGEUR_MOBILE;
   return {
-    x: (p.x ?? 0) * vue.l * (mobile ? MOBILE_X : 1),
+    x: mobile
+      ? ((p.x ?? 0) * MOBILE_X + (p.pour ?? 0) * MOBILE_VERSE_X) * vue.l
+      : (p.x ?? 0) * vue.l,
     y: (p.y ?? 0) * vue.h,
     r: p.r ?? 0,
     ry: p.ry ?? 0,

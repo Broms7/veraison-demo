@@ -32,7 +32,7 @@ assert.ok(Math.abs(dock.s - 144 / base) < 1e-9);
 
 // Mobile : bouteille presque centrée et réduite.
 const mob = poseCible({ x: 0.4, s: 1 }, { l: 375, h: 812 }, null, 500);
-assert.equal(mob.x, 0.4 * 375 * 0.1);
+assert.ok(Math.abs(mob.x - 0.4 * 375 * 0.1) < 1e-9);
 assert.equal(mob.s, 0.7);
 
 // Versé : bouteille droite → goulot au-dessus du centre ; renversée à 180° → en dessous.
@@ -40,5 +40,11 @@ const droite = verse({ x: 0, y: 0, r: 0, ry: 0, s: 1, label: 0, sil: 0, pour: 0 
 assert.ok(droite.goulotY < vue.h / 2);
 const renversee = verse({ x: 0, y: 0, r: 180, ry: 0, s: 1, label: 0, sil: 0, pour: 1 }, vue, base, 0.5);
 assert.ok(renversee.goulotY > vue.h / 2 && renversee.filet);
+
+// Mobile, au versé : le verre (≈ 0,12·h de large) doit rester dans l'écran.
+const vm = { l: 375, h: 812 };
+const pm = poseCible({ x: 0.15, y: -0.17, r: -112, s: 0.78, pour: 1 }, vm, null, 0.72 * vm.h);
+const gm = verse(pm, vm, 0.72 * vm.h, 0.5);
+assert.ok(gm.goulotX - gm.verreHauteur / 4 > 0, `verre hors écran (goulot à ${gm.goulotX})`);
 
 console.log("verifier-poses : OK");
