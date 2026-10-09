@@ -26,6 +26,9 @@ export function Scene({ modele, alt }: { modele: string | null; alt: string }) {
     let courant = -1;
     let creux = 0;
     return abonner(() => {
+      // Opacité (clé `o`) : jamais interpolée au scroll ; l'attribut déclenche un fondu CSS
+      // de 400 ms à l'entrée, 240 ms à la sortie (styles/site.css, .scene[data-efface]).
+      scene.current?.toggleAttribute("data-efface", etat.pose.o < 0.5);
       // Le repli suit la pose tant qu'il est visible.
       const el = repli.current;
       if (el && !prete) {

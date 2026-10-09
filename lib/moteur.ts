@@ -9,11 +9,11 @@ import Lenis from "lenis";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
-  poseAuScroll, poseCible, remplissage, verse, borne,
+  poseAuScroll, poseCible, remplissage, verse, borne, calculerAncres,
   type Pose, type PoseChapitre, type Verse, type Vue,
 } from "./poses";
 
-const POSE_NEUTRE: Pose = { x: 0, y: 0, r: 0, ry: 0, s: 1, label: 0, sil: 0, pour: 0 };
+const POSE_NEUTRE: Pose = { x: 0, y: 0, r: 0, ry: 0, s: 1, label: 0, sil: 0, pour: 0, o: 1 };
 
 /** État partagé, muté en place à chaque frame (jamais de setState React : 60 fois par seconde). */
 export const etat = {
@@ -55,7 +55,9 @@ export function demarrerMoteur(): () => void {
 
   // Les chapitres déclarent leur pose dans data-pose (cf. components/chapitres/Chapitre.tsx).
   const chapitres = [...document.querySelectorAll<HTMLElement>("[data-pose]")];
-  const poses: PoseChapitre[] = chapitres.map((el) => JSON.parse(el.dataset.pose ?? "{}") as PoseChapitre);
+  const declarees: PoseChapitre[] = chapitres.map((el) => JSON.parse(el.dataset.pose ?? "{}") as PoseChapitre);
+  // Un chapitre épinglé (`pin`) compte pour DEUX entrées de même pose : début et fin d'épinglage.
+  const poses: PoseChapitre[] = declarees.flatMap((p) => (p.pin ? [p, p] : [p]));
   const iVerse = poses.findIndex((p) => (p.pour ?? 0) > 0);
   const slot = document.getElementById("slot");
   const gabarit = document.getElementById("bouteille-repli");
@@ -65,11 +67,16 @@ export function demarrerMoteur(): () => void {
   function mesurer() {
     etat.vue = { l: innerWidth, h: innerHeight };
     etat.hauteurBase = gabarit?.offsetHeight || innerHeight * 0.72;
-    ancres = chapitres.map((el, i) => {
-      if (i === 0) return 0;
+    ancres = calculerAncres(chapitres.map((el, i) => {
       const r = el.getBoundingClientRect();
-      return r.top + scrollY + r.height / 2 - innerHeight / 2;
-    });
+      // Le ScrollTrigger d'épinglage porte l'id du chapitre (cf. components/site/Habillage.tsx) :
+      // ses start/end SONT les ancres de début et de fin, mesurées après refresh (pin-spacer compris).
+      const st = declarees[i].pin ? ScrollTrigger.getById(el.id) : undefined;
+      return {
+        haut: r.top + scrollY, hauteur: r.height, double: !!declarees[i].pin,
+        pin: st ? { debut: st.start, fin: st.end } : null,
+      };
+    }), innerHeight);
     etat.version++;
   }
 
@@ -98,7 +105,7 @@ export function demarrerMoteur(): () => void {
   }
 
   // En développement, l'état est lisible depuis la console (window.__veraison) pour mesurer au pixel.
-  if (process.env.NODE_ENV !== "production") Object.assign(window, { __veraison: etat });
+  if (process.env.NODE_ENV !== "production") Object.assign(window, { __veraison: etat, __scrollTrigger: ScrollTrigger });
 
   mesurer();
   gsap.ticker.add(tick);
@@ -108,6 +115,7 @@ export function demarrerMoteur(): () => void {
   addEventListener("resize", mesurer);
   addEventListener("load", mesurer);
   document.fonts?.ready.then(mesurer);
+  ScrollTrigger.addEventListener("refresh", mesurer);   // le pin-spacer change la hauteur du document
   const ro = new ResizeObserver(mesurer);
   ro.observe(document.body);
 
@@ -115,6 +123,7 @@ export function demarrerMoteur(): () => void {
     gsap.ticker.remove(tick);
     removeEventListener("resize", mesurer);
     removeEventListener("load", mesurer);
+    ScrollTrigger.removeEventListener("refresh", mesurer);
     ro.disconnect();
     lenis?.destroy();
     lenis = null;

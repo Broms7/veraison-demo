@@ -17,15 +17,17 @@ export interface Pose {
   label: number;  // étape d'écriture de l'étiquette, 0 (vierge) à 4 (complète), fractionnaire
   sil: number;    // contre-jour, 0 à 1
   pour: number;   // versé, 0 à 1
+  o: number;      // opacité CIBLE, 0 ou 1 : jamais interpolée au scroll (fondu temporel côté rendu)
 }
 
-/** Pose déclarée par un chapitre : x et y en fraction de la fenêtre, ou ancrage dans le slot DOM. */
-export type PoseChapitre = Partial<Pose> & { dock?: boolean };
+/** Pose déclarée par un chapitre : x et y en fraction de la fenêtre, ou ancrage dans le slot DOM.
+ *  `pin` : le chapitre est épinglé et fournit DEUX ancres (début et fin d'épinglage) avec la même pose. */
+export type PoseChapitre = Partial<Pose> & { dock?: boolean; pin?: boolean };
 
 export interface Vue { l: number; h: number }          // largeur, hauteur de la fenêtre
 export interface Rect { left: number; top: number; width: number; height: number }
 
-export const CLES = ["x", "y", "r", "ry", "s", "label", "sil", "pour"] as const;
+export const CLES = ["x", "y", "r", "ry", "s", "label", "sil", "pour"] as const;   // sans `o` : voir opaciteCible
 export const LARGEUR_MOBILE = 760;   // en dessous : chorégraphie simplifiée
 const MOBILE_X = 0.1;                // la bouteille reste presque centrée…
 const MOBILE_VERSE_X = 0.22;         // au versé, décalage à droite : sinon le verre sort de l'écran à gauche
@@ -40,7 +42,7 @@ export function poseCible(p: PoseChapitre, vue: Vue, slot: Rect | null, hauteurB
     return {
       x: slot.left + slot.width / 2 - vue.l / 2,
       y: slot.top + slot.height / 2 - vue.h / 2,
-      r: 0, ry: 360, s: slot.height / hauteurBase, label: 4, sil: 0, pour: 0,
+      r: 0, ry: 360, s: slot.height / hauteurBase, label: 4, sil: 0, pour: 0, o: 1,
     };
   }
   const mobile = vue.l < LARGEUR_MOBILE;
@@ -55,7 +57,15 @@ export function poseCible(p: PoseChapitre, vue: Vue, slot: Rect | null, hauteurB
     label: p.label ?? 0,
     sil: p.sil ?? 0,
     pour: p.pour ?? 0,
+    o: p.o ?? 1,
   };
+}
+
+/** Opacité cible sur un segment A → B (addendum §1) : u = avancement BRUT (sans palier) du segment.
+ *  On garde l'opacité de A jusqu'à 18 %, celle de B dès 82 %, et entre les deux la plus faible :
+ *  la bouteille est invisible pendant tout déplacement dont un bout est invisible. */
+export function opaciteCible(u: number, a: number, b: number): number {
+  return u <= 0.18 ? a : u >= 0.82 ? b : Math.min(a, b);
 }
 
 /** Taux d'avancement entre deux ancres, avec palier de maintien.
@@ -82,7 +92,10 @@ export function poseAuScroll(
   let i = 0;
   while (sy >= ancres[i + 1]) i++;
   const t = taux(sy, ancres[i], ancres[i + 1], reduit);
-  return { pose: interpoler(cible(i), cible(i + 1), t), courant: t < 0.5 ? i : i + 1 };
+  const A = cible(i), B = cible(i + 1);
+  const pose = interpoler(A, B, t);
+  pose.o = opaciteCible((sy - ancres[i]) / (ancres[i + 1] - ancres[i]), A.o, B.o);
+  return { pose, courant: t < 0.5 ? i : i + 1 };
 }
 
 /** Géométrie du versé, en pixels écran (origine en haut à gauche). */
@@ -122,4 +135,22 @@ export function verse(P: Pose, vue: Vue, hauteurBase: number, rempli: number): V
     opaciteVerre: borne((P.pour - 0.5) * 2),
     filet: P.pour > 0.92 && rempli > 0 && rempli < 0.99,
   };
+}
+
+/** Mesure d'un chapitre pour le calcul des ancres. `pin` = début et fin d'épinglage (positions de scroll),
+ *  fournis par le ScrollTrigger du chapitre quand il est réellement épinglé ; sinon null. */
+export interface MesureChapitre { haut: number; hauteur: number; double: boolean; pin: { debut: number; fin: number } | null }
+
+/** Ancres de toutes les entrées : 1 par chapitre, 2 pour un chapitre `pin` (début, fin).
+ *  Hors épinglage (mobile, mouvement réduit), un chapitre `pin` garde deux ancres collées au centre,
+ *  pour que l'indexation des entrées ne change pas. Le premier chapitre (le hero) est ancré à 0. */
+export function calculerAncres(mesures: MesureChapitre[], vueH: number): number[] {
+  const ancres: number[] = [];
+  mesures.forEach((m, i) => {
+    const centre = i === 0 ? 0 : m.haut + m.hauteur / 2 - vueH / 2;
+    if (!m.double) { ancres.push(centre); return; }
+    if (m.pin) ancres.push(m.pin.debut, Math.max(m.pin.debut + 1, m.pin.fin));
+    else ancres.push(centre, centre + 1);
+  });
+  return ancres;
 }
