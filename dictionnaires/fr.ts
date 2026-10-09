@@ -1,4 +1,4 @@
-// dictionnaires/fr.ts — textes français (provisoires, repris du wireframe validé).
+// dictionnaires/fr.ts — textes français (wireframe validé, voix de brand-direction §8).
 // La forme de cet objet sert de type de référence : en.ts doit la respecter à l'identique.
 
 export const fr = {
@@ -23,7 +23,11 @@ export const fr = {
     reserver: "Réserver une dégustation",
     langue: "Langue",
     sommaire: "Sommaire",
+    reserverCourt: "Réserver",
+    accueil: "Clos Ferrugine, retour en haut",
+    evitement: "Aller à la réservation",
   },
+  video: { pause: "Mettre la vidéo en pause", lecture: "Relancer la vidéo" },
   rail: "Niveau",
   sommaire: [
     { ancre: "ouverture", titre: "I · Ouverture" },
@@ -42,8 +46,8 @@ export const fr = {
     titre: "Véraison",
     gauche: "Rouge · Merlot, cabernet franc",
     droite: "Millésime MMXXI",
-    indice: "Défiler pour déboucher",
-    sceau: "CLOS FERRUGINE · POMEROL · MMXXI ·",
+    indice: "Défiler",
+    sceau: "CLOS FERRUGINE · PLATEAU DE POMEROL ·",
   },
   cuvee: {
     surtitre: "La cuvée",
@@ -83,11 +87,8 @@ export const fr = {
     ],
   },
   geste: {
-    video: "Vignette vidéo · Kling — la vigneronne au chai, plan taille",
-    lireVideo: "Lire la vidéo",
-    videoTitre: "Claire Dussol, vigneronne",
-    videoAttente: "Vidéo Kling à venir — 1 min 40, sous-titrée.",
-    legende: "Écouter Claire Dussol, vigneronne — 1 min 40",
+    alt: "Claire Dussol au chai, une pipette de chai à la main, entre deux rangs de barriques",
+    legende: "Claire Dussol, au chai",
     surtitre: "Le style",
     titreAvant: "Petit plateau,",
     titreMilieu: "grand ",
@@ -99,7 +100,8 @@ export const fr = {
   },
   verre: {
     surtitre: "Dans le verre",
-    titre: "Trois temps",
+    titreAvant: "Trois ",
+    titreAccent: "temps",
     notes: [
       { num: "01 · L'attaque", titre: "Mûre, prune, violette", texte: "Le fruit d'abord, frais, presque croquant. La violette arrive après vingt minutes d'air." },
       { num: "03 · La finale", titre: "Réglisse, tanins fins", texte: "Quarante secondes en bouche. Le tanin est serré mais poli : il tient sans accrocher." },
@@ -107,7 +109,7 @@ export const fr = {
     ],
   },
   table: {
-    photo: "Photo · Kling — magret sur la braise, cèpes, verre posé, lumière rasante, vue en plongée",
+    alt: "Agneau rosé tranché et cèpes à la persillade, assiette en grès sur un lin écru, vus d'en haut",
     surtitre: "À table",
     titreAvant: "Braise, cèpes",
     titreAccent: "patience",
@@ -116,9 +118,10 @@ export const fr = {
     cta: "Voir les accords",
   },
   domaine: {
-    fond: "Plein cadre · Kling (vidéo 6 s en boucle) — plateau de Pomerol à l'aube, clocher dans la brume",
     surtitre: "Le domaine",
-    titre: ["Onze matins", "de vendange"],
+    titreAvant: "Onze ",
+    titreAccent: "matins",
+    titreApres: "de vendange",
     texte:
       "Les parcelles tiennent sur le plateau, entre le clocher de Pomerol et la route de Catusseau, sur une argile bleue tachée de fer. On vendange avant que le soleil ne chauffe les grappes, en cagettes de douze kilos, avec la même équipe depuis 2009.",
     chiffres: [
@@ -134,11 +137,11 @@ export const fr = {
     titreAccent: "sol",
     fermer: "Fermer",
     annees: [
-      { annee: "2016", note: "Solaire, à ouvrir", statut: "Dernières", fiche: "Un été sec et chaud, une vendange précoce. Le plus ouvert de la lignée : on peut le boire dès maintenant, carafé." },
-      { annee: "2017", note: "Gel d'avril : 400 bouteilles", statut: "Épuisé", fiche: "La nuit du 27 avril a pris deux tiers de la récolte. Quatre cents bouteilles seulement, toutes parties." },
-      { annee: "2018", note: "Mildiou, puis grand été", statut: "Dernières", fiche: "Un printemps humide qu'il a fallu tenir rang par rang, puis un été magnifique. Un vin dense, à attendre encore trois ans." },
-      { annee: "2019", note: "Classique, à attendre", statut: "Disponible", fiche: "L'année de référence du domaine : équilibre, fraîcheur, tanins fins. À garder jusqu'en 2040." },
-      { annee: "2020", note: "Concentré, dense", statut: "Épuisé", fiche: "Petits rendements, baies serrées. Un vin puissant, sorti en primeur et vendu en trois semaines." },
+      { annee: "2016", etat: "dernieres", note: "Solaire, à ouvrir", statut: "Dernières", fiche: "Un été sec et chaud, une vendange précoce. Le plus ouvert de la lignée : on peut le boire dès maintenant, carafé." },
+      { annee: "2017", etat: "epuise", note: "Gel d'avril : 400 bouteilles", statut: "Épuisé", fiche: "La nuit du 27 avril a pris deux tiers de la récolte. Quatre cents bouteilles seulement, toutes parties." },
+      { annee: "2018", etat: "dernieres", note: "Mildiou, puis grand été", statut: "Dernières", fiche: "Un printemps humide qu'il a fallu tenir rang par rang, puis un été magnifique. Un vin dense, à attendre encore trois ans." },
+      { annee: "2019", etat: "disponible", note: "Classique, à attendre", statut: "Disponible", fiche: "L'année de référence du domaine : équilibre, fraîcheur, tanins fins. À garder jusqu'en 2040." },
+      { annee: "2020", etat: "epuise", note: "Concentré, dense", statut: "Épuisé", fiche: "Petits rendements, baies serrées. Un vin puissant, sorti en primeur et vendu en trois semaines." },
     ],
   },
   allocation: {
@@ -147,6 +150,7 @@ export const fr = {
     titreAccent: "pas une de plus",
     ajouter: "Ajouter",
     ajoute: "Ajouté",
+    chaiSeulement: "Au chai seulement",
     formats: [
       { id: "caisse", nom: "Caisse bois · 6", note: "Douze caisses", prix: 630 },
       { id: "magnum", nom: "Magnum 1,5 L", note: "Quarante, numérotés", prix: 280 },
@@ -178,15 +182,23 @@ export const fr = {
     ],
     complet: "complet",
     personnes: "Personnes",
+    auPlus: "8 au plus",
+    formule: "Formule",
+    heure: "Heure",
+    demo: "Démonstration : aucun paiement, aucune réservation transmise",
+    verification: "Vérification…",
+    confirmationSurtitre: "Réservation notée",
+    confirmationTitre: "À {jour}, {heure}",
+    numero: "N° R-0417",
+    adresse: "Clos Ferrugine, route de Catusseau, 33500 Pomerol",
     moins: "Retirer une personne",
     plus: "Ajouter une personne",
     pers: "pers.",
     aChoisir: "Choisissez une date",
-    ouvrirAgenda: "Choisir date et créneau",
+    ouvrirAgenda: "Choisir une date",
     fermerAgenda: "Valider",
     reserver: "Réserver la dégustation",
-    confirmationTitre: "Demande enregistrée",
-    confirmationTexte: "Réservation simulée : aucun paiement, aucune donnée envoyée. Sur le vrai site, Claire ou Paul vous confirmeraient le rendez-vous par e-mail.",
+    confirmationTexte: "Sur le vrai site, Claire ou Paul vous confirmeraient le rendez-vous par e-mail.",
     fermer: "Fermer",
   },
   journal: {
@@ -194,9 +206,9 @@ export const fr = {
     titre: "Carnet de chai",
     tout: "Tout le journal",
     articles: [
-      { photo: "Photo · Kling — sarments taillés, givre", meta: "Janvier · 4 min", titre: "La taille d'hiver, rang par rang" },
-      { photo: "Photo · Kling — bougies anti-gel dans les rangs", meta: "Avril 2017 · 6 min", titre: "La nuit où le gel a pris deux tiers" },
-      { photo: "Photo · Kling — clocher de Pomerol, vignes", meta: "Pomerol · 5 min", titre: "Pourquoi Pomerol refuse tout classement" },
+      { image: "journal-taille", alt: "Sarments taillés couverts de givre, sol d'argile", meta: "Janvier · 4 min", titre: "La taille d'hiver, rang par rang" },
+      { image: "journal-gel", alt: "Bougies anti-gel allumées dans les rangs, la nuit", meta: "Avril 2017 · 6 min", titre: "La nuit où le gel a pris deux tiers" },
+      { image: "journal-clocher", alt: "Le clocher de Pomerol vu entre deux rangs de vigne", meta: "Pomerol · 5 min", titre: "Pourquoi Pomerol refuse tout classement" },
     ],
   },
   pied: {
@@ -204,7 +216,8 @@ export const fr = {
     lettreTexte: "Une lettre par an, le jour où le millésime sort. Rien d'autre.",
     email: "Votre e-mail",
     inscrire: "S'inscrire",
-    inscrit: "Inscription simulée : rien n'a été envoyé.",
+    inscrit: "Inscrit. Prochaine lettre : le jour de la sortie du millésime.",
+    erreur: "Adresse incomplète",
     colonnes: [
       { titre: "Venir", liens: ["Dégustations", "La longue table", "Accès"] },
       { titre: "Acheter", liens: ["Allocation", "Cavistes", "Offrir"] },

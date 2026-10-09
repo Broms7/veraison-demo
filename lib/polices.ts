@@ -1,13 +1,14 @@
-// lib/polices.ts — POLICES PROVISOIRES (phase 1, reprises du wireframe)
-// Seul fichier à modifier en phase 2 pour changer de typographie, avec styles/tokens.css.
-// Anton est provisoire : Romain veut une autre grotesque condensée en final.
-// Chaque police expose une variable CSS (--police-*) que tokens.css relaie en --f-*.
-import { Anton, Cormorant_Garamond, Instrument_Sans, JetBrains_Mono } from "next/font/google";
+// lib/polices.ts — polices définitives (design-spec §1.3, pôle 3, 2026-10-09).
+// Chaque police expose une variable CSS (--police-*) que styles/tokens.css relaie en --f-*.
+// Titrage : Big Shoulders (variable). Sous Next 16, la famille « Display » n'existe plus : c'est
+// l'axe optique `opsz` qui la remplace. On le charge ici et on force le cran Display (72) en CSS
+// via --opsz-titre — sans ça, le navigateur sert le cran Texte, 7,6 % plus large, et les titres débordent.
+import { Big_Shoulders, Instrument_Serif, Instrument_Sans, IBM_Plex_Mono } from "next/font/google";
 
-const titre = Anton({ weight: "400", subsets: ["latin"], variable: "--police-titre", display: "swap" });
-const ital = Cormorant_Garamond({ weight: ["400", "500"], style: "italic", subsets: ["latin"], variable: "--police-ital", display: "swap" });
-const corps = Instrument_Sans({ weight: ["400", "500", "600"], subsets: ["latin"], variable: "--police-corps", display: "swap" });
-const mono = JetBrains_Mono({ weight: ["400", "500"], subsets: ["latin"], variable: "--police-mono", display: "swap" });
+const titre = Big_Shoulders({ weight: "variable", axes: ["opsz"], subsets: ["latin", "latin-ext"], variable: "--police-titre", display: "swap" });
+const ital = Instrument_Serif({ weight: "400", style: "italic", subsets: ["latin", "latin-ext"], variable: "--police-ital", display: "swap", preload: false });
+const corps = Instrument_Sans({ weight: ["400", "500", "600"], subsets: ["latin", "latin-ext"], variable: "--police-corps", display: "swap" });
+const mono = IBM_Plex_Mono({ weight: ["400", "500"], subsets: ["latin", "latin-ext"], variable: "--police-mono", display: "swap", preload: false });
 
 /** Classes à poser sur <html> pour déclarer les quatre variables. */
 export const classesPolices = [titre.variable, ital.variable, corps.variable, mono.variable].join(" ");

@@ -40,26 +40,17 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* Correspondance shadcn → tokens du domaine. Rien en dur. */
+/* Correspondance shadcn → tokens du domaine (design-spec §1.4). Rien en dur. */
 :root {
-  --background: var(--papier);
-  --foreground: var(--encre);
-  --card: var(--papier);
-  --card-foreground: var(--encre);
-  --popover: var(--papier);
-  --popover-foreground: var(--encre);
-  --primary: var(--vin);
-  --primary-foreground: var(--creme);
-  --secondary: var(--papier-2);
-  --secondary-foreground: var(--encre);
-  --muted: var(--papier-2);
-  --muted-foreground: var(--gris);
-  --accent: var(--papier-2);
-  --accent-foreground: var(--encre);
-  --destructive: var(--vin-clair);
-  --border: var(--filet);
-  --input: var(--filet);
-  --ring: var(--vin);
+  --background: var(--papier);      --foreground: var(--encre);
+  --card: var(--papier);            --card-foreground: var(--encre);
+  --popover: var(--papier);         --popover-foreground: var(--encre);
+  --primary: var(--vin);            --primary-foreground: var(--papier);
+  --secondary: var(--encre);        --secondary-foreground: var(--papier);
+  --muted: var(--papier-2);         --muted-foreground: var(--gris);
+  --accent: var(--papier-2);        --accent-foreground: var(--encre);
+  --destructive: var(--vin);
+  --border: var(--filet);           --input: var(--encre);   --ring: var(--vin);
   --radius: 0rem;
 }
 

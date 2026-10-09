@@ -1,80 +1,161 @@
 /* =============================================================
-   styles/tokens.css — TOKENS PROVISOIRES (phase 1, repris du wireframe)
-   -------------------------------------------------------------
-   Seul fichier à remplacer en phase 2 pour la direction artistique,
-   avec lib/polices.ts. Toutes les couleurs du site passent par ici,
-   y compris celles de la scène 3D et de l'étiquette (lues en JS
-   via getComputedStyle, cf. lib/tokens.ts).
+   styles/tokens.css — Véraison, direction définitive (pôle 3, 2026-10-09)
+   Remplace les tokens provisoires de la phase 1. Noms conservés.
+   Les couleurs 3D et étiquette sont lues en JS (getComputedStyle).
    ============================================================= */
 :root {
   /* --- Papier et encre --- */
-  --papier: #ece6db;        /* fond dominant */
-  --papier-2: #e1d9ca;      /* fond en creux, sélection */
-  --papier-carte: #efe9dfcc;/* carte posée sur la bouteille */
-  --encre: #17120f;         /* texte */
-  --gris: #6b635a;          /* texte secondaire */
-  --filet: #cfc5b3;         /* filets */
-  --hachure: #d3c9b6;       /* hachures des emplacements visuels */
-  --desactive: #b9ae9c;     /* jours fermés du calendrier */
+  --papier: #eee5dd;                    /* fond dominant (58 % de surface) */
+  --papier-2: #e3d8cf;                  /* = papier-creux : sélection, survol, cartes */
+  --papier-carte: rgb(238 229 221 / 0.94); /* carte .front et feuilles mobiles posées sur la bouteille */
+  --papier-etiquette: var(--3d-etiquette); /* papier de l'étiquette (canvas) */
+  --encre: #1e1215;                     /* texte, titres, bordures interactives */
+  --gris: #5e5257;                      /* = gris-chai : texte secondaire, légendes */
+  --filet: #d2c5bc;                     /* filets DÉCORATIFS uniquement (1,36:1) */
+  --hachure: #d9ccc2;                   /* placeholders d'image tant que Kling n'a pas livré */
+  --desactive: #8c7f84;                 /* texte désactivé (3,08:1, exempté WCAG, toujours doublé d'un barré) */
 
   /* --- Vin --- */
-  --bordeaux: #4a0e19;      /* cadre, pied de page */
-  --vin: #7d1a2b;           /* accent */
-  --vin-clair: #a33246;
-  --vin-pale: #c98b8f;
+  --bordeaux: #4a0e19;                  /* cadre, porte, pied, capsule */
+  --vin: #7d1a2b;                       /* accent : un mot par titre, CTA, sélection, focus */
+  --vin-clair: var(--oxyde);            /* alias phase 1 : 2e segment de la barre d'assemblage */
+  --vin-pale: var(--filet);             /* alias phase 1, plus utilisé */
+  --oxyde: #8a4b22;                     /* numérotation, rail, sceau d'étiquette */
+  --oxyde-clair: #d69a63;               /* accent et focus sur fonds sombres */
 
-  /* --- Nuit (chapitre inversé, pied) --- */
-  --nuit: #120c0d;
-  --creme: #efe7da;         /* texte sur fond sombre */
-  --creme-doux: #c9bcb4;    /* texte secondaire sur nuit */
-  --creme-pied: #d8c4c0;    /* texte secondaire sur bordeaux */
-  --rose-sourd: #c9aaa6;    /* libellés sur bordeaux */
-  --gris-nuit: #9c8f88;
-  --hachure-nuit-1: #1c1314;
-  --hachure-nuit-2: #2a1c1e;
-  --filet-nuit: #3a2a2c;
+  /* --- Nuit (chapitre VI) et pied --- */
+  --nuit: #140c0e;
+  --creme: var(--papier);               /* texte sur fond sombre = papier */
+  --voile: #bcada8;                     /* texte secondaire sur nuit et bordeaux */
+  --creme-doux: var(--voile);           /* alias phase 1 */
+  --creme-pied: var(--voile);           /* alias phase 1 */
+  --rose-sourd: var(--voile);           /* alias phase 1 */
+  --gris-nuit: var(--voile);            /* alias phase 1 */
+  --hachure-nuit-1: #1c1214;
+  --hachure-nuit-2: #2a1a1e;
+  --filet-nuit: #4a3a3e;                /* filets décoratifs sur nuit */
+  --filet-pied: #8c5560;                /* filets décoratifs sur bordeaux */
+  --voile-video: rgb(20 12 14 / 0.8);   /* voile minimal sous tout texte posé sur la vidéo */
 
-  /* --- Silhouettes plates (millésimes, allocation) --- */
-  --silhouette: #b7ad9d;
-  --silhouette-capsule: #9d9282;
-  --bois: #d9ccb4;
-  --bois-clair: #e6dac4;
-  --bois-trait: #a8977a;
-
-  /* --- Scène 3D (lues par lib/tokens.ts). En hex, rgb() ou hsl() : THREE.Color ne lit pas oklch(). --- */
-  --3d-verre: #18221b;      /* verre vert-noir de la bouteille */
-  --3d-capsule: #7a1a2a;    /* capsule bordeaux */
-  --3d-vin: #6d1424;        /* vin dans le verre et filet */
-  --3d-verre-a-pied: #f4efe6; /* verre à dégustation */
-  --3d-halo: #c4553f;       /* halo du contre-jour */
-  --3d-etiquette: #e9e1d1;  /* papier de l'étiquette */
+  /* --- Scène 3D (lues par lib/tokens.ts) --- */
+  --3d-verre: #0e1a12;                  /* aperçu validé (plus sombre que le #18221B de brand-direction) */
+  --3d-verre-sheen: #2d4a36;
+  --3d-verre-contrejour: #070a08;
+  --3d-capsule: #6e1526;                /* aperçu validé : bordeaux satiné, plus clair que le cadre */
+  --3d-vin: #5c1020;                    /* corps du vin dans le verre, filet */
+  --3d-vin-surface: #8e2a3a;            /* disque de surface (ménisque) */
+  --3d-verre-a-pied: #f4efe6;
+  --3d-halo: #c9814f;                   /* cœur du halo du chapitre VI */
+  --3d-lisere: #f2d2a8;                 /* liseré de contre-jour */
+  --3d-etiquette: #efe6d8;              /* papier de l'étiquette, aperçu validé */
+  --3d-etiquette-filet: #c9bbae;        /* filet de l'étape ③ sur l'étiquette */
+  --3d-etiquette-contrejour: #2e2a28;
+  --3d-ombre: #1e1215;
+  --3d-lumiere: #fff1e2;                /* lumière clé, aperçu validé */
+  --3d-contre: #ffd9c2;                 /* contre-jour arrière, aperçu validé */
 
   /* --- Mesures --- */
-  --cadre: 10px;            /* épaisseur du cadre bordeaux */
+  --cadre: 10px;
   --cadre-rayon: 14px;
-  --pad: clamp(20px, 5vw, 88px);
-  --colonne-bouteille: clamp(220px, 24vw, 400px); /* colonne centrale réservée */
-  --hauteur-bouteille: 72vh; /* hauteur de base de la bouteille (pose s = 1) */
+  --pad: clamp(16px, 5vw, 88px);
+  --largeur-max: 1680px;                /* au-delà, la grille se centre */
+  --colonne-bouteille: clamp(220px, 24vw, 400px);
+  --hauteur-bouteille: 72vh;
+  --gouttiere: 2.5vw;
+  --tete-h: 44px;                       /* hauteur utile de l'en-tête */
 
-  /* --- Échelle typographique --- */
-  --t-hero: clamp(90px, 20.5vw, 380px);
+  /* --- Espacements (base 4) --- */
+  --e-1: 4px;  --e-2: 8px;  --e-3: 12px; --e-4: 16px; --e-5: 24px;
+  --e-6: 32px; --e-7: 48px; --e-8: 64px; --e-9: 96px; --e-10: 128px;
+  --ch-haut: 16vh;                      /* padding haut d'un chapitre */
+  --ch-bas: 12vh;
+
+  /* --- Rayons et traits --- */
+  --r-0: 0;                             /* boutons, cartes, champs, calendrier, Dialog : angles vifs */
+  --r-rond: 50%;                        /* bouton lecture vidéo, sceau */
+  --trait: 1px;
+  --trait-fort: 1.5px;                  /* haut de la liste des formules, burger */
+  --focus-epaisseur: 2px;
+  --focus-decalage: 3px;
+
+  /* --- Échelle typographique (largeurs mesurées, cf. §2.0) --- */
+  --t-hero: min(calc(27vw - 12px), calc(19vw + 20px), 340px);
   --t-porte: clamp(64px, 13vw, 190px);
-  --t-h2: clamp(52px, 6.5vw, 112px);
+  --t-h2: clamp(56px, 7vw, 120px);      /* titre pleine largeur */
+  --t-h2-col: clamp(44px, 5.2vw, 92px); /* titre en colonne latérale */
   --t-h3: clamp(40px, 4.4vw, 72px);
+  --t-titre-m: clamp(30px, 2.8vw, 44px);/* noms de formules */
+  --t-titre-s: 30px;                    /* titres de notes, d'articles (26 px) */
   --t-chiffre: 44px;
-  --t-titre-s: 30px;
-  --t-surtitre: 19px;
-  --t-corps: 15px;
+  --t-chiffre-l: 48px;                  /* chiffres du domaine */
+  --t-prix: 26px;
+  --t-total: 30px;
+  --t-surtitre: 20px;
+  --t-chapeau: 18px;
+  --t-corps: 16px;
+  --t-petit: 14px;
+  --t-bouton: 12px;
   --t-mono: 11px;
   --t-geant: 24vw;
 
+  --lh-hero: 0.86;  --lh-titre: 0.92; --lh-h3: 0.94; --lh-chiffre: 0.9;
+  --lh-surtitre: 1.2; --lh-chapeau: 1.55; --lh-corps: 1.6; --lh-petit: 1.5; --lh-mono: 1.4;
+  --ls-titre: 0.005em; --ls-bouton: 0.14em; --ls-mono: 0.1em; --ls-mono-court: 0.14em; --ls-logo: 0.08em;
+
   /* --- Polices : variables posées par lib/polices.ts --- */
-  --f-titre: var(--police-titre), Impact, sans-serif;
+  --f-titre: var(--police-titre), "Arial Narrow", sans-serif;
   --f-ital: var(--police-ital), Georgia, serif;
   --f-corps: var(--police-corps), system-ui, sans-serif;
   --f-mono: var(--police-mono), ui-monospace, monospace;
+  --opsz-titre: "opsz" 72;              /* OBLIGATOIRE : cran Display de Big Shoulders */
 
   /* --- Mouvement --- */
+  --ease-sortie: cubic-bezier(0.2, 0.7, 0.2, 1);
   --ease-iris: cubic-bezier(0.7, 0, 0.2, 1);
   --duree-iris: 1.6s;
+  --d-tampon: 120ms;
+  --d-micro: 160ms;
+  --d-reduit: 200ms;
+  --d-ui: 240ms;
+  --d-tiroir: 320ms;
+  --d-texte: 600ms;
+  --d-titre: 800ms;
+  --decalage: 40ms;                     /* entre lignes de titre, entre lettres du hero */
+
+  /* --- Couches (z-index) --- */
+  --z-contenu: 1;
+  --z-bouteille: 5;                     /* le canvas R3F, pointer-events: none */
+  --z-front: 6;                         /* .front : cartes, vignettes, notes, photo V */
+  --z-rail: 20;
+  --z-tete: 20;
+  --z-tiroir: 25;                       /* Sheet, Drawer, Dialog + leur voile : sous le cadre */
+  --z-cadre: 30;
+  --z-porte: 40;
+}
+
+/* Tablette : 760–1099 px — grille à 3 colonnes resserrée */
+@media (min-width: 760px) and (max-width: 1099.98px) {
+  :root {
+    --colonne-bouteille: 200px;
+    --gouttiere: 24px;
+    --t-h2-col: clamp(40px, 5vw, 56px);
+  }
+}
+
+/* Mobile : < 760 px — la bouteille passe derrière le texte */
+@media (max-width: 759.98px) {
+  :root {
+    --cadre: 6px;
+    --cadre-rayon: 10px;
+    --hauteur-bouteille: 46svh;
+    --t-h2: clamp(44px, 12.4vw, 54px);
+    --t-h2-col: var(--t-h2);
+    --t-h3: clamp(36px, 10vw, 44px);
+    --t-chiffre: 40px;
+    --t-chiffre-l: 36px;
+    --t-titre-s: 26px;
+    --ch-haut: 46svh;                   /* fenêtre libre pour la pose de la bouteille */
+    --ch-bas: 8svh;
+    --z-bouteille: 0;                   /* derrière les feuilles de texte */
+  }
 }
