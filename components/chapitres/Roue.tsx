@@ -13,7 +13,7 @@ export function Roue({ t }: { t: Dictionnaire["roue"] }) {
       <div className="roue-grille">
         <figure className="roue-fig">
           <RoueAromes aromes={t.aromes} familles={t.familles} alt={t.alt} />
-          <table className="sr-only">
+          <div className="sr-only"><table>
             <caption>{t.alt}</caption>
             <thead><tr>{t.entetes.map((e) => <th key={e} scope="col">{e}</th>)}</tr></thead>
             <tbody>
@@ -21,7 +21,7 @@ export function Roue({ t }: { t: Dictionnaire["roue"] }) {
                 <tr key={a.nom}><th scope="row">{a.nom}</th><td>{t.familles[a.famille as Famille]}</td><td>{a.moment}</td><td>{a.intensite}</td></tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
         </figure>
         <div className="roue-texte front">
           <Surtitre folio="V">{t.surtitre}</Surtitre>

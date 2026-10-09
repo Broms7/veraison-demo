@@ -401,7 +401,7 @@ export function RoueAromes({ aromes, familles, alt }: { aromes: Arome[]; famille
     }
   });
   return (
-    <svg className="dessin roue" viewBox="-40 -30 480 460" data-trace="once" role="img" aria-label={alt}>
+    <svg className="dessin roue" viewBox="-100 -34 600 468" data-trace="once" role="img" aria-label={alt}>
       <g data-o="0">
         {[1, 2, 3].map((k) => <circle key={k} className="t pt anneau" cx="200" cy="200" r={40 + 45 * k} />)}
         {bornes.map((b) => {

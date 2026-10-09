@@ -74,12 +74,14 @@ body[data-porte="fermee"] { overflow: hidden; }
 .evitement:focus { transform: none; }
 
 /* ---------- cadre : iris qui s'ouvre (porte d'âge), puis reste à --cadre ---------- */
+/* Phase 3 : l'iris anime une ombre INTÉRIEURE (peinture seule) au lieu de `inset` (géométrie) :
+   animer inset déplaçait la boîte à chaque image et comptait comme décalage de mise en page (CLS ≈ 0,45). */
 .cadre {
   position: fixed; inset: var(--cadre); border-radius: var(--cadre-rayon);
-  box-shadow: 0 0 0 200vmax var(--bordeaux); pointer-events: none; z-index: var(--z-cadre);
-  transition: inset var(--duree-iris) var(--ease-iris);
+  box-shadow: 0 0 0 200vmax var(--bordeaux), inset 0 0 0 0 var(--bordeaux); pointer-events: none; z-index: var(--z-cadre);
+  transition: box-shadow var(--duree-iris) var(--ease-iris);
 }
-body[data-porte="fermee"] .cadre { inset: 50%; }
+body[data-porte="fermee"] .cadre { box-shadow: 0 0 0 200vmax var(--bordeaux), inset 0 0 0 50vmax var(--bordeaux); }
 
 /* ---------- porte d'âge (§3.19) ---------- */
 .porte { position: fixed; inset: 0; z-index: var(--z-porte); display: grid; place-items: center; text-align: center; color: var(--papier); padding: var(--e-5); transition: opacity 0.6s var(--ease-sortie); }
@@ -518,8 +520,8 @@ html:not([data-js]) .ch[data-registre]::before { transform: none; }
 /* ---------- V · roue et profil (§2) ---------- */
 .ch.roue-ch { min-height: auto; padding: 12vh var(--pad); }
 .roue-grille { display: grid; grid-template-columns: 1fr 1fr 0.5fr; gap: 4vw; align-items: center; max-width: var(--largeur-max); margin: 0 auto; }
-.roue-fig { margin: 0; padding: 0 70px; }
-.roue { width: min(520px, 38vw); height: auto; display: block; margin: 0 auto; }
+.roue-fig { margin: 0; padding: 0 20px; }
+.roue { width: min(600px, 44vw); height: auto; display: block; margin: 0 auto; }
 .roue .anneau { stroke: var(--filet); }
 .roue .rayon { stroke-width: 2px; }
 .roue text.famille { font: italic 400 16px var(--f-ital); letter-spacing: 0; fill: var(--encre); }
@@ -683,7 +685,7 @@ html[lang="en"] .critique blockquote p::after { content: "\201D"; }
   .racines-leg { position: static; order: 3; }
 
   .roue-grille, .dom-grille, .venir .grille-v { grid-template-columns: 1fr; }
-  .roue-fig { padding: 0 48px; background: var(--papier-carte); }
+  .roue-fig { padding: 12px; background: var(--papier-carte); }
   .roue { width: 100%; }
   .jauge { grid-template-columns: 90px auto 1fr; gap: 10px; }
 
