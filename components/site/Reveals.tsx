@@ -11,6 +11,11 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import { CustomEase } from "gsap/CustomEase";
 import { useGSAP } from "@gsap/react";
+import dynamic from "next/dynamic";
+
+// Mouvement de la phase 3 (tracés, compteurs, transitions, VIII épinglé) : chunk séparé, chargé après
+// l'hydratation. Il ne pèse pas dans le JS de démarrage.
+const Habillage = dynamic(() => import("./Habillage"), { ssr: false });
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText, CustomEase);
 
@@ -31,13 +36,23 @@ export function Reveals() {
         return;
       }
       if (surtitre) gsap.from(surtitre, { opacity: 0, duration: 0.4, ease: EASE, scrollTrigger: declencheur });
+      // Mot accent : il entre à l'encre avec sa ligne, puis sèche en vin (400 ms, 200 ms après la ligne).
+      // Le mot « fer » du sol est piloté par le tracé de la coupe (Habillage), pas ici.
+      const accent = titre.querySelector(".vin, .accent") && !titre.hasAttribute("data-fer");
+      if (accent) titre.setAttribute("data-encre", "");
       SplitText.create(titre, {
         type: "lines", mask: "lines", autoSplit: true,
         onSplit(self) {
           // Interligne serré : on agrandit les masques vers le haut pour ne pas rogner les accents.
           self.masks.forEach((m) => { (m as HTMLElement).style.paddingTop = "0.25em"; (m as HTMLElement).style.marginTop = "-0.25em"; });
           // onComplete : le titre retrouve son DOM d'origine une fois révélé (doc SplitText).
-          return gsap.from(self.lines, { yPercent: 105, duration: 0.8, ease: EASE, stagger: 0.04, scrollTrigger: declencheur, onComplete: () => self.revert() });
+          return gsap.from(self.lines, {
+            yPercent: 105, duration: 0.8, ease: EASE, stagger: 0.04, scrollTrigger: declencheur,
+            onComplete: () => {
+              self.revert();
+              if (accent) gsap.delayedCall(0.2, () => titre.removeAttribute("data-encre"));
+            },
+          });
         },
       });
     });
@@ -49,7 +64,7 @@ export function Reveals() {
     });
 
     if (!reduit) {
-      gsap.utils.toArray<HTMLElement>("[data-trace]").forEach((groupe) => {
+      gsap.utils.toArray<HTMLElement>("[data-trace-releves]").forEach((groupe) => {
         // pathLength="1" sur chaque trait : le tirage 1 → 0 dessine le trait sur toute sa longueur.
         // Un relevé (une année) après l'autre, décalés de 80 ms ; les épuisés restent en pointillé, sans tracé.
         groupe.querySelectorAll(".releve:not(.epuise)").forEach((releve, i) => {
@@ -63,5 +78,5 @@ export function Reveals() {
       });
     }
   });
-  return null;
+  return <Habillage />;
 }
