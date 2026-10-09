@@ -1,39 +1,49 @@
 "use client";
-// components/ilots/Ilots.tsx — les petits îlots client posés dans des chapitres serveur :
-// bouton d'ajout à l'allocation, tiroir de lecture (Sheet), vidéo (Dialog), titre d'ouverture,
-// sceau qui tourne, lettre des vendanges. Regroupés ici : chacun fait quelques lignes.
-import { useEffect, useRef, useState, type ReactNode } from "react";
+// components/ilots/Ilots.tsx — petits îlots client posés dans des chapitres serveur :
+// bouton d'ajout, tiroir de lecture (Sheet), boucle vidéo, titre d'ouverture, sceau, lettre des vendanges.
+import Image from "next/image";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { gsap } from "gsap";
 import { SplitText } from "gsap/SplitText";
 import { useGSAP } from "@gsap/react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useSite } from "@/components/site/Fournisseur";
 import { abonner, etat } from "@/lib/moteur";
 import { usePauseScroll } from "@/lib/scroll";
+import { useMouvementReduit } from "@/lib/media";
 
 gsap.registerPlugin(useGSAP, SplitText);
 
-/** Ajoute une unité au panier d'allocation (état local, pas de backend). */
-export function BoutonAjout({ libelle, libelleAjoute, className = "ajout" }: { libelle: string; libelleAjoute?: string; className?: string }) {
-  const { ajouter } = useSite();
+/** Ajoute une unité au panier d'allocation (§3.3 bouton contour) : « Ajouté · n » pendant 1,6 s. */
+export function BoutonAjout({ libelle, libelleAjoute, className = "btn-contour" }: { libelle: string; libelleAjoute?: string; className?: string }) {
+  const { ajouter, panier } = useSite();
   const [fait, setFait] = useState(false);
+  const minuteur = useRef(0);
+  useEffect(() => () => window.clearTimeout(minuteur.current), []);
   return (
-    <button className={className} onClick={() => { ajouter(); setFait(true); }}>
-      {fait && libelleAjoute ? libelleAjoute : libelle}
+    <button className={className} onClick={() => {
+      ajouter();
+      if (!libelleAjoute) return;
+      setFait(true);
+      window.clearTimeout(minuteur.current);
+      minuteur.current = window.setTimeout(() => setFait(false), 1600);
+    }}>
+      {fait && libelleAjoute ? `${libelleAjoute} · ${panier}` : libelle}
     </button>
   );
 }
 
-/** Tiroir latéral de lecture (fiche technique, fiche millésime). */
-export function Tiroir({ declencheur, titre, texte, classeDeclencheur = "lien" }: { declencheur: ReactNode; titre: string; texte: string; classeDeclencheur?: string }) {
+/** Tiroir latéral de lecture (fiche technique, fiche millésime). Radix pose aria-expanded sur le déclencheur. */
+export function Tiroir({ declencheur, titre, texte, classeDeclencheur = "lien", libelle }: {
+  declencheur: ReactNode; titre: string; texte: string; classeDeclencheur?: string; libelle?: string;
+}) {
   const [ouvert, setOuvert] = useState(false);
   usePauseScroll(ouvert);
   return (
     <Sheet open={ouvert} onOpenChange={setOuvert}>
-      <SheetTrigger className={classeDeclencheur}>{declencheur}</SheetTrigger>
-      <SheetContent side="right" className="tiroir">
-        <SheetHeader>
+      <SheetTrigger className={classeDeclencheur} aria-label={libelle}>{declencheur}</SheetTrigger>
+      <SheetContent side="right">
+        <SheetHeader className="p-0">
           <SheetTitle className="titre tiroir-titre">{titre}</SheetTitle>
           <SheetDescription className="tiroir-texte">{texte}</SheetDescription>
         </SheetHeader>
@@ -42,66 +52,117 @@ export function Tiroir({ declencheur, titre, texte, classeDeclencheur = "lien" }
   );
 }
 
-/** Vignette vidéo : ouvre une modale plein cadre (la vidéo Kling viendra plus tard). */
-export function VideoGeste({ vignette, libelle, titre, attente }: { vignette: string; libelle: string; titre: string; attente: string }) {
-  const [ouvert, setOuvert] = useState(false);
-  usePauseScroll(ouvert);
+/**
+ * Boucle vidéo muette (chapitres III et VI) : lecture quand 30 % visible, pause hors champ,
+ * bouton pause 44 px (WCAG 2.2.2). Image fixe seule si mouvement réduit ou si la vidéo manque.
+ * `decorative` : la vidéo est aria-hidden et le poster sans alt (fond du chapitre VI).
+ */
+export function BoucleVideo({ video, poster, alt, sizes, pause, lecture, decorative = false, className = "" }: {
+  video: string | null; poster: string; alt: string; sizes: string; pause: string; lecture: string; decorative?: boolean; className?: string;
+}) {
+  const reduit = useMouvementReduit();
+  const ref = useRef<HTMLVideoElement>(null);
+  const [enPause, setEnPause] = useState(false);   // pause demandée par le visiteur
+  const voulue = useRef(false);                      // miroir de enPause lisible par l'observateur
+
+  useEffect(() => {
+    const v = ref.current;
+    if (!v) return;
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting && !voulue.current) v.play().catch(() => { /* lecture refusée : le poster reste */ });
+      else v.pause();
+    }, { threshold: 0.3 });
+    obs.observe(v);
+    return () => obs.disconnect();
+  }, [video, reduit]);
+
+  const basculer = () => {
+    const v = ref.current;
+    if (!v) return;
+    voulue.current = !enPause;
+    if (enPause) v.play().catch(() => {}); else v.pause();
+    setEnPause(!enPause);
+  };
+
   return (
-    <Dialog open={ouvert} onOpenChange={setOuvert}>
-      <div className="video ph">
-        {vignette}
-        <DialogTrigger className="play" aria-label={libelle}>
-          <svg viewBox="0 0 10 12" width="12" height="14" aria-hidden="true"><path d="M0 0 10 6 0 12Z" fill="currentColor" /></svg>
-        </DialogTrigger>
-      </div>
-      <DialogContent className="modale-video">
-        <DialogTitle className="titre">{titre}</DialogTitle>
-        <div className="ph sombre modale-video-ecran">{attente}</div>
-        <DialogDescription className="sr-only">{attente}</DialogDescription>
-      </DialogContent>
-    </Dialog>
+    <div className={`media ${className}`}>
+      {video && !reduit ? (
+        <>
+          <video ref={ref} src={video} poster={poster} muted loop playsInline preload="metadata"
+            aria-hidden={decorative || undefined} aria-label={decorative ? undefined : alt} />
+          <button type="button" className="media-pause" onClick={basculer} aria-label={enPause ? lecture : pause} aria-pressed={enPause}>
+            {enPause ? (
+              <svg width="14" height="16" viewBox="0 0 14 16" aria-hidden="true"><path d="M1 1 13 8 1 15Z" fill="currentColor" /></svg>
+            ) : (
+              <svg width="14" height="16" viewBox="0 0 14 16" aria-hidden="true"><path d="M2 1h3v14H2zM9 1h3v14H9z" fill="currentColor" /></svg>
+            )}
+          </button>
+        </>
+      ) : (
+        <Image src={poster} alt={decorative ? "" : alt} fill sizes={sizes} />
+      )}
+    </div>
   );
 }
 
-/** Titre d'ouverture : révélé lettre par lettre (SplitText) quand l'iris s'ouvre. */
+/** Titre d'ouverture : lettres révélées une à une (masque) quand l'iris s'ouvre (§5.2, ch. I). */
 export function TitreOuverture({ texte }: { texte: string }) {
   const ref = useRef<HTMLHeadingElement>(null);
   const { entree } = useSite();
   useGSAP(() => {
-    if (!entree || !ref.current || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!entree || !ref.current) return;
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      gsap.from(ref.current, { opacity: 0, duration: 0.2 });
+      return;
+    }
     const split = SplitText.create(ref.current, { type: "chars", mask: "chars" });
-    // L'interligne de 0,82 couperait les accents (le É) : on agrandit chaque masque vers le haut.
+    // L'interligne de 0,86 couperait les accents (le É) : on agrandit chaque masque vers le haut.
     split.masks.forEach((m) => { (m as HTMLElement).style.paddingTop = "0.3em"; (m as HTMLElement).style.marginTop = "-0.3em"; });
-    gsap.from(split.chars, { yPercent: 105, duration: 1.1, ease: "power4.out", stagger: 0.06, delay: 0.7 });
+    gsap.from(split.chars, { yPercent: 105, duration: 0.8, ease: "power3.out", stagger: 0.04, delay: 0.9 });
   }, { dependencies: [entree], scope: ref });
   return <h1 ref={ref} className="titre titre-ouverture">{texte}</h1>;
 }
 
-/** Sceau du domaine : tourne avec le scroll (lu sur l'état du moteur). */
-export function Sceau({ texte }: { texte: string }) {
+/** Sceau du domaine : texte sur cercle + monogramme F dans le clos. Tourne avec le scroll (0,06°/px). */
+export function Sceau({ texte, className = "sceau", tourne = true }: { texte: string; className?: string; tourne?: boolean }) {
   const ref = useRef<SVGSVGElement>(null);
-  useEffect(() => abonner(() => {
-    if (ref.current) ref.current.style.transform = `rotate(${etat.sy * 0.06}deg)`;
-  }), []);
+  const id = useId();
+  useEffect(() => {
+    if (!tourne) return;
+    return abonner(() => {
+      if (ref.current && !etat.reduit) ref.current.style.transform = `rotate(${etat.sy * 0.06}deg)`;
+    });
+  }, [tourne]);
   return (
-    <svg ref={ref} className="sceau" viewBox="0 0 120 120" aria-hidden="true">
-      <defs><path id="cercle-sceau" d="M60,60 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0" /></defs>
+    <svg ref={ref} className={className} viewBox="0 0 120 120" aria-hidden="true">
+      <defs><path id={id} d="M60,60 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0" /></defs>
       <circle cx="60" cy="60" r="56" fill="none" stroke="currentColor" strokeWidth=".8" />
       <circle cx="60" cy="60" r="36" fill="none" stroke="currentColor" strokeWidth=".5" />
-      <text className="sceau-texte" fill="currentColor"><textPath href="#cercle-sceau">{texte}</textPath></text>
-      <text className="sceau-f" x="60" y="66" textAnchor="middle" fill="currentColor">F</text>
+      <text className="sceau-texte" fill="currentColor"><textPath href={`#${id}`}>{texte}</textPath></text>
+      {/* Monogramme : le F dans le clos (carré à coins adoucis, rayon 12 % du côté) */}
+      <rect x="49" y="49" width="22" height="22" rx="2.6" fill="none" stroke="currentColor" strokeWidth="1.1" />
+      <text x="60" y="66.5" textAnchor="middle" fill="currentColor" fontFamily="var(--f-titre)" fontWeight="900" fontSize="17">F</text>
     </svg>
   );
 }
 
-/** Lettre des vendanges : inscription simulée, rien n'est envoyé. */
-export function Lettre({ email, inscrire, inscrit }: { email: string; inscrire: string; inscrit: string }) {
-  const [fait, setFait] = useState(false);
+/** Lettre des vendanges : inscription simulée, avec message d'erreur relié au champ (§3.18). */
+export function Lettre({ email, inscrire, inscrit, erreur }: { email: string; inscrire: string; inscrit: string; erreur: string }) {
+  const [etatForm, setEtatForm] = useState<"repos" | "erreur" | "inscrit">("repos");
+  const id = useId();
   return (
-    <form className="inscr" onSubmit={(e) => { e.preventDefault(); setFait(true); }}>
-      <input type="email" required placeholder={email} aria-label={email} autoComplete="email" />
+    <form className="inscr" noValidate onSubmit={(e) => {
+      e.preventDefault();
+      const champ = e.currentTarget.elements.namedItem("email") as HTMLInputElement;
+      setEtatForm(champ.value && champ.checkValidity() ? "inscrit" : "erreur");
+    }}>
+      <label className="mono" htmlFor={`${id}-email`}>{email}</label>
+      <input id={`${id}-email`} name="email" type="email" required placeholder="nom@exemple.fr" autoComplete="email"
+        aria-invalid={etatForm === "erreur" || undefined} aria-describedby={`${id}-retour`} />
       <button className="mono">{inscrire}</button>
-      <p className="mono inscr-retour" role="status">{fait ? inscrit : ""}</p>
+      <p id={`${id}-retour`} className={`mono inscr-retour ${etatForm === "erreur" ? "erreur" : ""}`} role="status">
+        {etatForm === "erreur" ? erreur : etatForm === "inscrit" ? inscrit : ""}
+      </p>
     </form>
   );
 }
