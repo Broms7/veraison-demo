@@ -7,10 +7,14 @@ import { demarrerMoteur, getLenis } from "@/lib/moteur";
 import type { Langue } from "@/dictionnaires";
 
 const CLE_AGE = "veraison-age-legal";
+const DUREE_MEMOIRE = 30 * 24 * 3600 * 1000;   // choix mémorisé 30 jours (§3.19)
 
-/** Lit le choix mémorisé. localStorage peut être bloqué (navigation privée) → try/catch. */
+/** Lit le choix mémorisé (horodatage). localStorage peut être bloqué (navigation privée) → try/catch. */
 function ageMemorise(): boolean {
-  try { return localStorage.getItem(CLE_AGE) === "oui"; } catch { return false; }
+  try {
+    const quand = Number(localStorage.getItem(CLE_AGE));
+    return quand > 0 && Date.now() - quand < DUREE_MEMOIRE;
+  } catch { return false; }
 }
 const pasDAbonnement = () => () => {};
 
@@ -49,7 +53,7 @@ export function Fournisseur({ langue, children }: { langue: Langue; children: Re
 
   const entrer = useCallback(() => {
     setClic(true);
-    try { localStorage.setItem(CLE_AGE, "oui"); } catch { /* sans stockage, on redemandera */ }
+    try { localStorage.setItem(CLE_AGE, String(Date.now())); } catch { /* sans stockage, on redemandera */ }
   }, []);
   const ajouter = useCallback(() => setPanier((n) => n + 1), []);
 

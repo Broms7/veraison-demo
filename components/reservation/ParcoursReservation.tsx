@@ -1,63 +1,64 @@
 "use client";
 // components/reservation/ParcoursReservation.tsx — réservation de dégustation SIMULÉE (aucun backend).
-// formule → date → créneau → personnes → récap avec total → confirmation factice (Dialog).
-// Sur mobile (< 760 px), date / créneau / personnes s'ouvrent dans un Drawer plein écran.
-import { useMemo, useState, useSyncExternalStore } from "react";
-import { fr as localeFr, enUS } from "react-day-picker/locale";
+// formule → date → créneau → personnes → récap (bon de sortie) → confirmation factice (Dialog).
+// design-spec §3.10 à §3.15 et §6.4 (parcours complet au clavier). Zéro animation dans ce chapitre.
+// Mobile : calendrier, créneaux, personnes, récap et confirmation dans un Drawer plein écran.
+import { useMemo, useRef, useState } from "react";
+import { RadioGroup } from "radix-ui";
+import { fr as localeFr, enGB } from "react-day-picker/locale";
 import { Calendar } from "@/components/ui/calendar";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
-import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger, DrawerClose } from "@/components/ui/drawer";
+import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
+import { Sceau } from "@/components/ilots/Ilots";
 import { usePauseScroll } from "@/lib/scroll";
-import { LARGEUR_MOBILE } from "@/lib/poses";
+import { useMobile, useMonte } from "@/lib/media";
 import type { Dictionnaire, Langue } from "@/dictionnaires";
 
 type T = Dictionnaire["resa"];
 const PERSONNES_MIN = 1;
 const PERSONNES_MAX = 8;
+const MOIS_OUVERTS = 3;          // plage réservable : aujourd'hui + 3 mois
+const DUREE_VERIFICATION = 600;  // ms simulées avant la confirmation
 
-const pasDAbonnement = () => () => {};
-/** true seulement côté client, après hydratation : le calendrier dépend de la date du jour,
- *  qui diffère entre le build statique et le navigateur. */
-const useMonte = () => useSyncExternalStore(pasDAbonnement, () => true, () => false);
-
-/** Suit une media query sans setState dans un effet. */
-function useMobile() {
-  const requete = `(max-width: ${LARGEUR_MOBILE - 1}px)`;
-  return useSyncExternalStore(
-    (cb) => { const m = matchMedia(requete); m.addEventListener("change", cb); return () => m.removeEventListener("change", cb); },
-    () => matchMedia(requete).matches,
-    () => false,
-  );
-}
+/** Locale d'affichage : anglais britannique pour /en (semaine qui commence le lundi, « €110 »). */
+const LOCALE: Record<Langue, string> = { fr: "fr-FR", en: "en-GB" };
 
 interface Choix { date: Date | undefined; creneau: string; personnes: number }
 
-/** Date, créneau, nombre de personnes : en ligne sur desktop, dans le Drawer sur mobile. */
-function Agenda({ t, langue, choix, maj }: { t: T; langue: Langue; choix: Choix; maj: (partiel: Partial<Choix>) => void }) {
+/** Date, créneau, nombre de personnes (§3.11 à §3.13). */
+function Agenda({ t, langue, choix, maj }: { t: T; langue: Langue; choix: Choix; maj: (p: (c: Choix) => Partial<Choix>) => void }) {
   const monte = useMonte();
-  // Jours fermés : passés, dimanche (0) et lundi (1). La date du jour n'est lue que dans le
-  // navigateur (monte) : au prérendu statique, elle serait figée à la date du build.
-  const fermes = useMemo(() => {
-    if (!monte) return [];
-    const aujourdhui = new Date();
-    aujourdhui.setHours(0, 0, 0, 0);
-    return [{ before: aujourdhui }, { dayOfWeek: [0, 1] }];
+  // La date du jour n'est lue que dans le navigateur : au prérendu statique, elle serait figée au build.
+  const bornes = useMemo(() => {
+    if (!monte) return null;
+    const auj = new Date();
+    auj.setHours(0, 0, 0, 0);
+    const fin = new Date(auj.getFullYear(), auj.getMonth() + MOIS_OUVERTS + 1, 0);
+    return { auj, fin, fermes: [{ before: auj }, { after: fin }, { dayOfWeek: [0, 1] }] };
   }, [monte]);
+
   return (
     <div className="agenda-champs">
-      <div className="ag-tete"><span className="mono">{t.date}</span><span className="mono ag-ferme">{t.ferme}</span></div>
-      {monte ? (
+      <div className="ag-tete"><span className="mono">{t.date}</span><span className="mono">{t.ferme}</span></div>
+      {bornes ? (
         <Calendar
           mode="single"
-          locale={langue === "fr" ? localeFr : enUS}
+          locale={langue === "fr" ? localeFr : enGB}
           selected={choix.date}
-          onSelect={(date) => maj({ date })}
-          disabled={fermes}
+          onSelect={(date) => maj(() => ({ date }))}
+          disabled={bornes.fermes}
+          startMonth={bornes.auj}
+          endMonth={bornes.fin}
+          showOutsideDays={false}
           className="calendrier"
+          classNames={{
+            caption_label: "cal-mois", weekday: "cal-jsem", day: "cal-jour",
+            today: "cal-auj", disabled: "cal-ferme", button_previous: "cal-nav", button_next: "cal-nav",
+          }}
         />
       ) : (
-        <div className="calendrier calendrier-attente" aria-hidden="true" />
+        <div className="calendrier" style={{ height: 330 }} aria-hidden="true" />
       )}
 
       <div className="mono ag-label" id="libelle-creneau">{t.creneau}</div>
@@ -67,22 +68,22 @@ function Agenda({ t, langue, choix, maj }: { t: T; langue: Langue; choix: Choix;
         aria-labelledby="libelle-creneau"
         value={choix.creneau}
         // Radix renvoie "" si on reclique l'élément actif : on garde alors le choix courant.
-        onValueChange={(v) => v && maj({ creneau: v })}
+        onValueChange={(v) => v && maj(() => ({ creneau: v }))}
       >
         {t.creneaux.map((c) => (
-          <ToggleGroupItem key={c.id} value={c.id} className="chip" disabled={c.complet}>
+          <ToggleGroupItem key={c.id} value={c.id} className="chip" disabled={c.complet} aria-disabled={c.complet || undefined}>
             {c.libelle}{c.complet ? ` · ${t.complet}` : ""}
           </ToggleGroupItem>
         ))}
       </ToggleGroup>
 
-      <div className="mono ag-label">{t.personnes}</div>
+      <div className="mono ag-label">{t.personnes}<span className="mention">{t.auPlus}</span></div>
       <div className="pas">
         <button type="button" aria-label={t.moins} disabled={choix.personnes <= PERSONNES_MIN}
-          onClick={() => maj({ personnes: Math.max(PERSONNES_MIN, choix.personnes - 1) })}>−</button>
+          onClick={() => maj((c) => ({ personnes: Math.max(PERSONNES_MIN, c.personnes - 1) }))}>−</button>
         <output aria-live="polite">{choix.personnes}</output>
         <button type="button" aria-label={t.plus} disabled={choix.personnes >= PERSONNES_MAX}
-          onClick={() => maj({ personnes: Math.min(PERSONNES_MAX, choix.personnes + 1) })}>+</button>
+          onClick={() => maj((c) => ({ personnes: Math.min(PERSONNES_MAX, c.personnes + 1) }))}>+</button>
       </div>
     </div>
   );
@@ -93,68 +94,95 @@ export function ParcoursReservation({ t, langue }: { t: T; langue: Langue }) {
   const [formuleId, setFormuleId] = useState(t.formules[0].id);
   const [choix, setChoix] = useState<Choix>({ date: undefined, creneau: t.creneaux[0].id, personnes: 2 });
   const [tiroir, setTiroir] = useState(false);
+  const [verification, setVerification] = useState(false);
   const [confirme, setConfirme] = useState(false);
-  // Mise à jour fonctionnelle : deux actions rapprochées ne s'écrasent pas (pas de copie périmée de l'état).
-  const maj = (partiel: Partial<Choix>) => setChoix((c) => ({ ...c, ...partiel }));
+  const titreConfirmation = useRef<HTMLHeadingElement>(null);
   usePauseScroll(tiroir || confirme);
+  // Mise à jour fonctionnelle : deux actions rapprochées ne s'écrasent pas.
+  const maj = (p: (c: Choix) => Partial<Choix>) => setChoix((c) => ({ ...c, ...p(c) }));
 
+  const loc = LOCALE[langue];
   const formule = t.formules.find((f) => f.id === formuleId) ?? t.formules[0];
   const creneau = t.creneaux.find((c) => c.id === choix.creneau) ?? t.creneaux[0];
-  const euros = new Intl.NumberFormat(langue, { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
-  const dateLisible = choix.date?.toLocaleDateString(langue, { weekday: "long", day: "numeric", month: "long" });
-  const resume = `${dateLisible ?? t.aChoisir} · ${creneau.libelle} · ${choix.personnes} ${t.pers}`;
+  const euros = new Intl.NumberFormat(loc, { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+  const total = euros.format(formule.prix * choix.personnes);
+  const dateLongue = choix.date?.toLocaleDateString(loc, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  const jour = choix.date?.toLocaleDateString(loc, { weekday: "long" }) ?? "";
+
+  const confirmer = () => {
+    setVerification(true);
+    window.setTimeout(() => {
+      setVerification(false);
+      setTiroir(false);
+      setConfirme(true);
+    }, DUREE_VERIFICATION);
+  };
+
+  const bonDeSortie = (
+    <>
+      <div className="recap">
+        <dl>
+          <dt>{t.formule}</dt><dd>{formule.nom}</dd>
+          <dt>{t.date}</dt><dd>{dateLongue ?? "—"}</dd>
+          <dt>{t.heure}</dt><dd>{creneau.libelle}</dd>
+          <dt>{t.personnes}</dt><dd>{choix.personnes}</dd>
+        </dl>
+        <b className="total" aria-live="polite">{total}</b>
+        <p className="mono recap-demo">{t.demo}</p>
+      </div>
+      <button className="btn confirmer" disabled={!choix.date || verification} aria-busy={verification || undefined} onClick={confirmer}>
+        {verification ? t.verification : t.reserver}
+      </button>
+      <p className="mono manque-date" role="status">{choix.date ? "" : t.aChoisir}</p>
+    </>
+  );
 
   return (
     <div className="resa">
-      <ToggleGroup
-        type="single"
-        orientation="vertical"
-        spacing={0}
-        className="formules"
-        aria-label={t.formulesLibelle}
-        value={formuleId}
-        onValueChange={(v) => v && setFormuleId(v)}
-      >
+      <RadioGroup.Root className="formules" aria-label={t.formulesLibelle} value={formuleId} onValueChange={setFormuleId}>
         {t.formules.map((f) => (
-          <ToggleGroupItem key={f.id} value={f.id} className="formule">
+          <RadioGroup.Item key={f.id} value={f.id} className="formule">
             <span className="num">{f.num}</span>
             <span className="nom">{f.nom}</span>
             <span className="meta">{f.meta}</span>
             <span className="prix">{euros.format(f.prix)}</span>
-          </ToggleGroupItem>
+          </RadioGroup.Item>
         ))}
-      </ToggleGroup>
+      </RadioGroup.Root>
 
       <div className="agenda">
         {mobile ? (
           <Drawer open={tiroir} onOpenChange={setTiroir}>
-            <DrawerTrigger className="btn ouvrir-agenda">{t.ouvrirAgenda}</DrawerTrigger>
+            <DrawerTrigger className="btn btn-secondaire ouvrir-agenda">{t.ouvrirAgenda}</DrawerTrigger>
             <DrawerContent className="tiroir-agenda">
-              <DrawerTitle className="titre">{formule.nom}</DrawerTitle>
+              <DrawerTitle className="titre tiroir-titre">{formule.nom}</DrawerTitle>
               <Agenda t={t} langue={langue} choix={choix} maj={maj} />
-              <DrawerClose className="btn btn-vin">{t.fermerAgenda}</DrawerClose>
+              {bonDeSortie}
             </DrawerContent>
           </Drawer>
         ) : (
-          <Agenda t={t} langue={langue} choix={choix} maj={maj} />
+          <>
+            <Agenda t={t} langue={langue} choix={choix} maj={maj} />
+            {bonDeSortie}
+          </>
         )}
-
-        <div className="recap">
-          <b>{euros.format(formule.prix * choix.personnes)}</b>
-          {formule.nom}<br />
-          <span className="recap-detail">{resume}</span>
-        </div>
-        <button className="btn btn-vin confirmer" disabled={!choix.date} onClick={() => setConfirme(true)}>
-          {t.reserver}
-        </button>
       </div>
 
       <Dialog open={confirme} onOpenChange={setConfirme}>
-        <DialogContent className="confirmation">
-          <DialogTitle className="titre">{t.confirmationTitre}</DialogTitle>
-          <p className="confirmation-resume">{formule.nom} · {resume} · {euros.format(formule.prix * choix.personnes)}</p>
-          <DialogDescription>{t.confirmationTexte}</DialogDescription>
-          <button className="btn" onClick={() => setConfirme(false)}>{t.fermer}</button>
+        <DialogContent className="confirmation" showCloseButton={false}
+          onOpenAutoFocus={(e) => { e.preventDefault(); titreConfirmation.current?.focus(); }}>
+          <Sceau texte="CLOS FERRUGINE · PLATEAU DE POMEROL ·" className="sceau-confirmation" tourne={false} />
+          <p className="surtitre">{t.confirmationSurtitre}</p>
+          <DialogTitle ref={titreConfirmation} tabIndex={-1} className="titre">
+            {t.confirmationTitre.replace("{jour}", jour).replace("{heure}", creneau.libelle)}
+          </DialogTitle>
+          <div className="bon mono">
+            <p className="numero">{t.numero}</p>
+            <p>{formule.nom} · {dateLongue} · {creneau.libelle} · {choix.personnes} {t.pers} · {total}</p>
+            <p>{t.adresse}</p>
+          </div>
+          <DialogDescription>{t.confirmationTexte} {t.demo}.</DialogDescription>
+          <button className="btn btn-secondaire" onClick={() => setConfirme(false)}>{t.fermer}</button>
         </DialogContent>
       </Dialog>
     </div>

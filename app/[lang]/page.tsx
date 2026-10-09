@@ -5,7 +5,8 @@ import path from "node:path";
 import { notFound } from "next/navigation";
 import { estLangue, getDictionnaire } from "@/dictionnaires";
 import { Fournisseur } from "@/components/site/Fournisseur";
-import { PorteAge } from "@/components/habillage/PorteAge";
+import { Reveals } from "@/components/site/Reveals";
+import { PorteAge, Inerte } from "@/components/habillage/PorteAge";
 import { EnTete } from "@/components/habillage/EnTete";
 import { Rail } from "@/components/habillage/Rail";
 import { Scene } from "@/components/scene/Scene";
@@ -21,9 +22,11 @@ import { Reservation } from "@/components/chapitres/Reservation";
 import { Journal } from "@/components/chapitres/Journal";
 import { PiedDePage } from "@/components/chapitres/PiedDePage";
 
-/** Le modèle Meshy est utilisé dès qu'il est déposé ; sinon, bouteille procédurale. Vérifié au build. */
-const CHEMIN_MODELE = "/models/bouteille.glb";
-const modele = fs.existsSync(path.join(process.cwd(), "public", CHEMIN_MODELE)) ? CHEMIN_MODELE : null;
+/** Un fichier de public/ est utilisé s'il existe au build ; sinon le composant prend son repli. */
+const siPresent = (chemin: string) => (fs.existsSync(path.join(process.cwd(), "public", chemin)) ? chemin : null);
+const MODELE = siPresent("/models/bouteille.glb");                 // sinon bouteille procédurale
+const VIDEO_CLAIRE = siPresent("/visuels/claire-geste.mp4");       // sinon image fixe
+const VIDEO_PLATEAU = siPresent("/visuels/plateau-aube-1600.mp4"); // sinon image fixe
 
 export default async function Page({ params }: PageProps<"/[lang]">) {
   const { lang } = await params;
@@ -41,24 +44,28 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
         </filter>
       </svg>
 
-      <PorteAge t={t.porte} />
-      <EnTete t={t.tete} sommaire={t.sommaire} />
-      <Rail libelle={t.rail} />
-      <Scene modele={modele} alt={t.repli} />
+      <PorteAge t={t.porte} libelleLangue={t.tete.langue} />
+      <Inerte>
+        <a className="evitement" href="#resa">{t.tete.evitement}</a>
+        <EnTete t={t.tete} sommaire={t.sommaire} />
+        <Rail libelle={t.rail} />
+        <Scene modele={MODELE} alt={t.repli} />
 
-      <main>
-        <Ouverture t={t.ouverture} />
-        <Cuvee t={t.cuvee} />
-        <Geste t={t.geste} />
-        <DansLeVerre t={t.verre} />
-        <ATable t={t.table} />
-        <Domaine t={t.domaine} />
-        <Millesimes t={t.millesimes} />
-        <Allocation t={t.allocation} langue={lang} />
-        <Reservation t={t.resa} langue={lang} />
-        <Journal t={t.journal} />
-      </main>
-      <PiedDePage t={t.pied} />
+        <main>
+          <Ouverture t={t.ouverture} />
+          <Cuvee t={t.cuvee} />
+          <Geste t={t.geste} video={VIDEO_CLAIRE} tv={t.video} />
+          <DansLeVerre t={t.verre} />
+          <ATable t={t.table} />
+          <Domaine t={t.domaine} video={VIDEO_PLATEAU} tv={t.video} />
+          <Millesimes t={t.millesimes} />
+          <Allocation t={t.allocation} langue={lang} />
+          <Reservation t={t.resa} langue={lang} />
+          <Journal t={t.journal} />
+        </main>
+        <PiedDePage t={t.pied} />
+      </Inerte>
+      <Reveals />
     </Fournisseur>
   );
 }

@@ -9,7 +9,7 @@ export function Reservation({ t, langue }: { t: Dictionnaire["resa"]; langue: La
     <Chapitre id="resa" className="resa-ch">
       <div className="entete">
         <div>
-          <p className="ital">{t.surtitre}</p>
+          <p className="surtitre">{t.surtitre}</p>
           <h2 className="titre">{t.titreAvant}<br />{t.titreMilieu}<span className="vin">{t.titreAccent}</span></h2>
         </div>
         <p className="intro">{t.intro}</p>

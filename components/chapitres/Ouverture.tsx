@@ -1,4 +1,5 @@
 // components/chapitres/Ouverture.tsx — I. Ouverture : titre usé, sceau, bouteille inclinée, étiquette vierge.
+// Pas de feuille sur mobile : rien ne chevauche la bouteille (le titre est au-dessus, §2.2).
 import { Chapitre } from "./Chapitre";
 import { Sceau, TitreOuverture } from "@/components/ilots/Ilots";
 import type { PoseChapitre } from "@/lib/poses";
@@ -11,7 +12,7 @@ export function Ouverture({ t }: { t: Dictionnaire["ouverture"] }) {
     <Chapitre id="ouverture" pose={POSE} className="ouverture">
       <Sceau texte={t.sceau} />
       <div>
-        <p className="ital">{t.surtitre}</p>
+        <p className="surtitre">{t.surtitre}</p>
         <TitreOuverture texte={t.titre} />
         <div className="sous"><span className="mono">{t.gauche}</span><span className="mono">{t.droite}</span></div>
       </div>
