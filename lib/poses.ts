@@ -28,7 +28,6 @@ export interface Rect { left: number; top: number; width: number; height: number
 export const CLES = ["x", "y", "r", "ry", "s", "label", "sil", "pour"] as const;
 export const LARGEUR_MOBILE = 760;   // en dessous : chorégraphie simplifiée
 const MOBILE_X = 0.1;                // la bouteille reste presque centrée…
-const MOBILE_S = 0.7;                // …et réduite, derrière le texte
 const MOBILE_VERSE_X = 0.22;         // au versé, décalage à droite : sinon le verre sort de l'écran à gauche
 
 export const borne = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
@@ -52,7 +51,7 @@ export function poseCible(p: PoseChapitre, vue: Vue, slot: Rect | null, hauteurB
     y: (p.y ?? 0) * vue.h,
     r: p.r ?? 0,
     ry: p.ry ?? 0,
-    s: (p.s ?? 1) * (mobile ? MOBILE_S : 1),
+    s: p.s ?? 1,   // sur mobile, la réduction vient de --hauteur-bouteille (46svh), pas d'ici
     label: p.label ?? 0,
     sil: p.sil ?? 0,
     pour: p.pour ?? 0,
@@ -96,8 +95,10 @@ export interface Verse {
   filet: boolean;                     // le filet coule-t-il ?
 }
 
-/** Repère du verre (viewBox 60 × 120 du wireframe) : coupe de y = 4 à 60, le vin monte de 60 à 30. */
-export const VERRE = { hauteurVue: 0.24, ecartSousGoulot: 0.1, fond: 60, plein: 30, repere: 120 };
+/** Repère du verre (viewBox 60 × 120 du wireframe) : le vin monte de 60 (fond du calice) à 30 (mi-calice).
+ *  Le verre fait 1/3 de la bouteille de base, et son bord est à 0,1389 × hauteur de base sous le goulot
+ *  (= 24vh et 10vh du wireframe quand la bouteille fait 72vh). */
+export const VERRE = { tiersBouteille: 1 / 3, ecartSousGoulot: 0.1 / 0.72, fond: 60, plein: 30, repere: 120 };
 
 /** Taux de remplissage du verre : suit le scroll autour de l'ancre du chapitre « verse ». */
 export function remplissage(sy: number, ancreVerse: number | null, vueH: number, reduit: boolean, pour: number): number {
@@ -112,8 +113,8 @@ export function verse(P: Pose, vue: Vue, hauteurBase: number, rempli: number): V
   const a = (P.r * Math.PI) / 180;
   const goulotX = vue.l / 2 + P.x + h * Math.sin(a);
   const goulotY = vue.h / 2 + P.y - h * Math.cos(a);
-  const verreHauteur = vue.h * VERRE.hauteurVue;
-  const verreHaut = goulotY + vue.h * VERRE.ecartSousGoulot;
+  const verreHauteur = hauteurBase * VERRE.tiersBouteille;
+  const verreHaut = goulotY + hauteurBase * VERRE.ecartSousGoulot;
   const niveau = VERRE.fond - rempli * (VERRE.fond - VERRE.plein);
   const surface = verreHaut + (niveau / VERRE.repere) * verreHauteur;
   return {

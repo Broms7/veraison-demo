@@ -1,13 +1,14 @@
-// lib/etiquette.ts — dessin de l'étiquette et de la contre-étiquette sur un canvas 2D.
-// Fonctions pures (ne lisent que leurs arguments) : la texture R3F appelle dessinerEtiquette
-// à chaque changement d'étape, et la même fonction pourra servir à un export image.
-// Coordonnées reprises du SVG du wireframe : l'étiquette avant fait 120 unités de haut
-// (y 196 → 316), la contre-étiquette 86 (y 214 → 300). 1 unité = H / hauteur en px canvas.
-// Le texte de l'étiquette n'est pas traduit : c'est la bouteille réelle, avec ses mentions françaises.
+// lib/etiquette.ts — dessin de l'étiquette et de la contre-étiquette (design-spec §4.4 et §4.5).
+// Mise en page reprise de l'aperçu 3D validé (assets-3d/apercu.html), coordonnées données pour
+// une base 1024 × 1280 (avant) et 700 × 900 (dos), multipliées par l'échelle du canvas (× 2 sur desktop).
+// L'étiquette est dessinée UNE SEULE FOIS, complète : c'est le shader (components/scene/materiaux.ts)
+// qui masque chaque étape par bande au fil du scroll. Re-téléverser une texture 2048 × 2560 à chaque
+// image coûterait ~21 Mo par envoi.
+// Le texte n'est pas traduit : c'est la bouteille réelle, avec ses mentions françaises.
 
 export interface ThemeEtiquette {
-  polices: { titre: string; ital: string; mono: string };   // familles CSS (ex. "'Anton', 'Anton Fallback'")
-  couleurs: { papier: string; encre: string; vin: string; gris: string; filet: string };
+  polices: { titre: string; ital: string; mono: string };   // familles CSS générées par next/font
+  couleurs: { papier: string; encre: string; vin: string; gris: string; filet: string; oxyde: string };
 }
 
 export const TEXTE_ETIQUETTE = {
@@ -21,107 +22,99 @@ export const TEXTE_ETIQUETTE = {
   dos: {
     titre: "ASSEMBLAGE",
     cepages: ["Merlot 85", "Cabernet franc 15"],
-    mentions: ["VENDANGE MANUELLE · 18 MOIS", "EN BARRIQUE · NON FILTRÉ"],
+    mentions: ["VENDANGE MANUELLE · 18 MOIS EN BARRIQUE", "NON COLLÉ · NON FILTRÉ"],
     sulfites: "CONTIENT DES SULFITES",
+    sanitaire: ["L'ABUS D'ALCOOL EST DANGEREUX POUR LA SANTÉ,", "À CONSOMMER AVEC MODÉRATION."],
   },
 };
 
-/** Taille des canvas : le rapport largeur / hauteur suit l'arc du cylindre (cf. Bouteille.tsx). */
-export const CANVAS_AVANT = { l: 640, h: 1018, unites: 120 };
-export const CANVAS_DOS = { l: 640, h: 922, unites: 86 };
+/** Bases de mise en page (px) : la taille réelle du canvas en est un multiple. */
+export const BASE_AVANT = { l: 1024, h: 1280 };
+export const BASE_DOS = { l: 700, h: 900 };
 
-const borne = (v: number) => Math.min(1, Math.max(0, v));
+/** Bandes de chaque étape en coordonnée v de texture (v = 1 − y / hauteur), §4.4. */
+export const BANDES = [
+  [0.633, 0.891],  // ① CLOS FERRUGINE + VÉRAISON
+  [0.367, 0.594],  // ② 2021 + appellation
+  [0.199, 0.336],  // ③ filet + degré + mise
+  [0.086, 0.172],  // ④ numéro
+] as const;
 
-/** Écrit une ligne centrée. y et taille en unités d'étiquette, interlettrage en unités. */
-function ligne(
-  ctx: CanvasRenderingContext2D, u: number, texte: string, y: number,
-  police: string, taille: number, couleur: string, interlettre = 0, style = "",
-) {
-  ctx.font = `${style} ${taille * u}px ${police}`.trim();
+/** Papier + grain léger. Le grain est discret : les bandes masquées montrent un papier uni (§4.4). */
+function papier(ctx: CanvasRenderingContext2D, couleur: string, f: number) {
+  const { width: l, height: h } = ctx.canvas;
   ctx.fillStyle = couleur;
-  ctx.letterSpacing = `${interlettre * u}px`;
-  ctx.fillText(texte, ctx.canvas.width / 2, y * u);
+  ctx.fillRect(0, 0, l, h);
+  // Grain pseudo-aléatoire déterministe (même rendu à chaque chargement).
+  let graine = 7;
+  const alea = () => ((graine = (graine * 16807) % 2147483647) / 2147483647);
+  for (let i = 0; i < 4000 * f * f; i++) {
+    ctx.fillStyle = `rgba(80,50,40,${alea() * 0.025})`;
+    ctx.fillRect(alea() * l, alea() * h, 1.5 * f, 1.5 * f);
+  }
 }
 
-/**
- * Étiquette avant. `etape` va de 0 (vierge) à 4 (complète) et peut être fractionnaire :
- * chaque bloc apparaît en fondu entre deux étapes entières, comme dans le wireframe.
- *  ① domaine + nom de la cuvée  ② millésime + appellation  ③ degré + mise  ④ numéro
- */
-export function dessinerEtiquette(ctx: CanvasRenderingContext2D, etape: number, theme: ThemeEtiquette): void {
-  const { l, h } = { l: ctx.canvas.width, h: ctx.canvas.height };
-  const u = h / CANVAS_AVANT.unites;
+/** Texte centré : police CSS complète (« 900 230px famille »), interlettrage en px de base. */
+function texte(ctx: CanvasRenderingContext2D, t: string, x: number, y: number, police: string, couleur: string, f: number, espace = 0) {
+  ctx.font = police;
+  ctx.fillStyle = couleur;
+  ctx.textAlign = "center";
+  ctx.letterSpacing = `${espace * f}px`;
+  ctx.fillText(t, x, y);
+  ctx.letterSpacing = "0px";
+}
+
+/** Étiquette avant, complète (les 4 étapes). Le masquage par étape est fait par le shader. */
+export function dessinerEtiquette(ctx: CanvasRenderingContext2D, theme: ThemeEtiquette): void {
+  const f = ctx.canvas.width / BASE_AVANT.l;
+  const cx = ctx.canvas.width / 2;
   const { polices: p, couleurs: c } = theme;
   const T = TEXTE_ETIQUETTE;
+  const px = (n: number) => `${n * f}px`;
 
-  ctx.globalAlpha = 1;
-  ctx.fillStyle = c.papier;
-  ctx.fillRect(0, 0, l, h);
-  // Filet intérieur, toujours présent : l'étiquette « vierge » est un cadre vide.
+  papier(ctx, c.papier, f);
+  // Le « clos » : filet intérieur vin à 46 px du bord.
   ctx.strokeStyle = c.vin;
-  ctx.lineWidth = 0.35 * u;
-  ctx.strokeRect(2.5 * u, 2.5 * u, l - 5 * u, h - 5 * u);
+  ctx.lineWidth = 3 * f;
+  ctx.strokeRect(46 * f, 46 * f, ctx.canvas.width - 92 * f, ctx.canvas.height - 92 * f);
 
-  ctx.textAlign = "center";
-  ctx.textBaseline = "alphabetic";
-  const blocs: Array<() => void> = [
-    () => {
-      ligne(ctx, u, T.domaine, 14, p.mono, 3.1, c.encre, 0.5);
-      ligne(ctx, u, T.cuvee, 39, p.titre, 15, c.vin);
-    },
-    () => {
-      ligne(ctx, u, T.millesime, 58, p.ital, 11, c.encre, 0, "italic");
-      ligne(ctx, u, T.appellation, 69, p.mono, 2.5, c.gris, 0.3);
-    },
-    () => {
-      ctx.strokeStyle = c.filet;
-      ctx.lineWidth = 0.4 * u;
-      ctx.beginPath();
-      ctx.moveTo(l / 2 - 20 * u, 80 * u);
-      ctx.lineTo(l / 2 + 20 * u, 80 * u);
-      ctx.stroke();
-      ligne(ctx, u, T.degre, 90, p.mono, 2.7, c.encre, 0.3);
-      ligne(ctx, u, T.mise, 97, p.mono, 2.2, c.gris, 0.3);
-    },
-    () => ligne(ctx, u, T.numero, 111, p.ital, 6, c.vin, 0, "italic"),
-  ];
-  blocs.forEach((dessiner, k) => {
-    const alpha = borne(etape - k);
-    if (alpha <= 0) return;
-    ctx.globalAlpha = alpha;
-    dessiner();
-  });
-  ctx.globalAlpha = 1;
-  ctx.letterSpacing = "0px";
+  texte(ctx, T.domaine, cx, 190 * f, `500 ${px(40)} ${p.mono}`, c.encre, f, 14);                    // ①
+  texte(ctx, T.cuvee, cx, 450 * f, `900 ${px(230)} ${p.titre}`, c.vin, f, 2);                       // ①
+  texte(ctx, T.millesime, cx, 680 * f, `italic 400 ${px(190)} ${p.ital}`, c.encre, f);               // ②
+  texte(ctx, T.appellation, cx, 790 * f, `500 ${px(30)} ${p.mono}`, c.gris, f, 6);                  // ②
+  ctx.fillStyle = c.filet;                                                                          // ③
+  ctx.fillRect(cx - 220 * f, 870 * f, 440 * f, 2 * f);
+  texte(ctx, T.degre, cx, 950 * f, `500 ${px(36)} ${p.mono}`, c.encre, f, 8);                       // ③
+  texte(ctx, T.mise, cx, 1010 * f, `500 ${px(26)} ${p.mono}`, c.gris, f, 6);                        // ③
+  // ④ Le numéro : coup de numéroteur, encre oxyde, légèrement de travers.
+  ctx.save();
+  ctx.translate(cx, 1140 * f);
+  ctx.rotate(-0.035);
+  ctx.globalAlpha = 0.88;
+  texte(ctx, T.numero, 0, 0, `italic 400 ${px(92)} ${p.ital}`, c.oxyde, f);
+  ctx.restore();
 }
 
-/** Contre-étiquette : assemblage et mentions légales (pictogramme femme enceinte, sulfites). */
+/** Contre-étiquette (format 7:9) : assemblage, mentions, pictogramme, sulfites, mention sanitaire. */
 export function dessinerContreEtiquette(ctx: CanvasRenderingContext2D, theme: ThemeEtiquette): void {
-  const { l, h } = { l: ctx.canvas.width, h: ctx.canvas.height };
-  const u = h / CANVAS_DOS.unites;
+  const f = ctx.canvas.width / BASE_DOS.l;
+  const cx = ctx.canvas.width / 2;
   const { polices: p, couleurs: c } = theme;
   const D = TEXTE_ETIQUETTE.dos;
+  const px = (n: number) => `${n * f}px`;
 
-  ctx.globalAlpha = 1;
-  ctx.fillStyle = c.papier;
-  ctx.fillRect(0, 0, l, h);
-  ctx.textAlign = "center";
-  ligne(ctx, u, D.titre, 12, p.mono, 2.6, c.encre, 0.4);
-  ligne(ctx, u, D.cepages[0], 24, p.ital, 5, c.encre, 0, "italic");
-  ligne(ctx, u, D.cepages[1], 32, p.ital, 5, c.encre, 0, "italic");
-  ligne(ctx, u, D.mentions[0], 49, p.mono, 2.2, c.gris);
-  ligne(ctx, u, D.mentions[1], 54, p.mono, 2.2, c.gris);
-
-  // Pictogramme femme enceinte (mention obligatoire en France) : cercle barré.
-  // Silhouette simplifiée — à remplacer par le pictogramme officiel en phase 2.
-  const cx = l / 2, cy = 70 * u, r = 6 * u;
+  papier(ctx, c.papier, f);
+  texte(ctx, D.titre, cx, 110 * f, `500 ${px(30)} ${p.mono}`, c.encre, f, 10);
+  texte(ctx, D.cepages[0], cx, 220 * f, `italic 400 ${px(76)} ${p.ital}`, c.encre, f);
+  texte(ctx, D.cepages[1], cx, 310 * f, `italic 400 ${px(76)} ${p.ital}`, c.encre, f);
+  texte(ctx, D.mentions[0], cx, 420 * f, `500 ${px(22)} ${p.mono}`, c.gris, f, 3);
+  texte(ctx, D.mentions[1], cx, 460 * f, `500 ${px(22)} ${p.mono}`, c.gris, f, 3);
+  // Pictogramme femme enceinte : cercle barré (forme simplifiée, vitrine fictive).
   ctx.strokeStyle = c.encre;
-  ctx.lineWidth = 0.6 * u;
-  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
-  ctx.beginPath(); ctx.arc(cx - 0.6 * u, cy - 3 * u, 1 * u, 0, Math.PI * 2); ctx.stroke();
-  ctx.beginPath(); ctx.ellipse(cx + 0.4 * u, cy + 0.8 * u, 1.6 * u, 2.4 * u, 0, 0, Math.PI * 2); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(cx - 4.2 * u, cy + 4.2 * u); ctx.lineTo(cx + 4.2 * u, cy - 4.2 * u); ctx.stroke();
-
-  ligne(ctx, u, D.sulfites, 82, p.mono, 1.9, c.gris);
-  ctx.letterSpacing = "0px";
+  ctx.lineWidth = 5 * f;
+  ctx.beginPath(); ctx.arc(cx, 610 * f, 70 * f, 0, Math.PI * 2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx - 50 * f, 660 * f); ctx.lineTo(cx + 50 * f, 560 * f); ctx.stroke();
+  texte(ctx, D.sulfites, cx, 750 * f, `500 ${px(24)} ${p.mono}`, c.gris, f, 4);
+  texte(ctx, D.sanitaire[0], cx, 812 * f, `400 ${px(22)} ${p.mono}`, c.gris, f, 1);
+  texte(ctx, D.sanitaire[1], cx, 844 * f, `400 ${px(22)} ${p.mono}`, c.gris, f, 1);
 }

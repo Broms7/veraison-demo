@@ -27,6 +27,8 @@ export const etat = {
   courant: 0,          // index du chapitre courant
   reduit: false,
   version: 0,          // incrémentée quand quelque chose de visible a changé
+  animerJusqua: 0,     // horodatage (ms) : rendre chaque image jusque-là (tween du tampon ④)
+  bouteillePrete: false, // étiquettes dessinées : le canvas peut remplacer l'image de repli
 };
 
 type Abonne = (tempsMs: number) => void;

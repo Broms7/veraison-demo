@@ -33,7 +33,7 @@ assert.ok(Math.abs(dock.s - 144 / base) < 1e-9);
 // Mobile : bouteille presque centrée et réduite.
 const mob = poseCible({ x: 0.4, s: 1 }, { l: 375, h: 812 }, null, 500);
 assert.ok(Math.abs(mob.x - 0.4 * 375 * 0.1) < 1e-9);
-assert.equal(mob.s, 0.7);
+assert.equal(mob.s, 1);   // la réduction mobile vient de la hauteur de base (46svh)
 
 // Versé : bouteille droite → goulot au-dessus du centre ; renversée à 180° → en dessous.
 const droite = verse({ x: 0, y: 0, r: 0, ry: 0, s: 1, label: 0, sil: 0, pour: 0 }, vue, base, 0);
@@ -43,8 +43,11 @@ assert.ok(renversee.goulotY > vue.h / 2 && renversee.filet);
 
 // Mobile, au versé : le verre (≈ 0,12·h de large) doit rester dans l'écran.
 const vm = { l: 375, h: 812 };
-const pm = poseCible({ x: 0.15, y: -0.17, r: -112, s: 0.78, pour: 1 }, vm, null, 0.72 * vm.h);
-const gm = verse(pm, vm, 0.72 * vm.h, 0.5);
+const pm = poseCible({ x: 0.15, y: -0.17, r: -112, s: 0.78, pour: 1 }, vm, null, 0.46 * vm.h);
+const gm = verse(pm, vm, 0.46 * vm.h, 0.5);
 assert.ok(gm.goulotX - gm.verreHauteur / 4 > 0, `verre hors écran (goulot à ${gm.goulotX})`);
+assert.ok(gm.surface < vm.h, "surface du vin sous l'écran");
+// Desktop : verre = 1/3 de la bouteille de base, soit 24vh pour une bouteille de 72vh (wireframe).
+assert.ok(Math.abs(verse(pm, vue, base, 0).verreHauteur - 0.24 * vue.h) < 1e-9);
 
 console.log("verifier-poses : OK");
