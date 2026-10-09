@@ -10,8 +10,8 @@ import { useGSAP } from "@gsap/react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useSite } from "@/components/site/Fournisseur";
 import { abonner, etat } from "@/lib/moteur";
-import { usePauseScroll } from "@/lib/scroll";
-import { useMouvementReduit } from "@/lib/media";
+import { allerA, usePauseScroll } from "@/lib/scroll";
+import { useMonte, useMouvementReduit } from "@/lib/media";
 
 gsap.registerPlugin(useGSAP, SplitText, CustomEase);
 const EASE_SORTIE = CustomEase.create("sortie", "0.2,0.7,0.2,1");   // = --ease-sortie
@@ -54,6 +54,42 @@ export function Tiroir({ declencheur, titre, texte, classeDeclencheur = "lien", 
   );
 }
 
+/** Fiche d'un millésime (addendum §2, X) : photo 4:5, année, statut + stock, météo, dégustation.
+ *  Pour la 2021 (`allocation`), un lien ferme la fiche et défile jusqu'à l'allocation (XII). */
+interface AnneeFiche { annee: string; statut: string; stock: string; meteo: string; degustation: string; alt: string }
+export function FicheMillesime({ a, photo, t, declencheur, classeDeclencheur, allocation = false }: {
+  a: AnneeFiche; photo: string | null; declencheur: ReactNode; classeDeclencheur: string; allocation?: boolean;
+  t: { fermer: string; meteo: string; degustation: string; voirAllocation: string };
+}) {
+  const [ouvert, setOuvert] = useState(false);
+  usePauseScroll(ouvert);
+  return (
+    <Sheet open={ouvert} onOpenChange={setOuvert}>
+      <SheetTrigger className={classeDeclencheur}>{declencheur}</SheetTrigger>
+      <SheetContent side="right" className="fiche-m">
+        <div className="media fiche-photo">
+          {photo ? <Image src={photo} alt={a.alt} fill sizes="(max-width: 759px) 92vw, 500px" /> : <span className="hachure mono">{a.annee}</span>}
+        </div>
+        <SheetHeader className="p-0">
+          <SheetTitle className="titre fiche-an">{a.annee}</SheetTitle>
+          <SheetDescription className="mono fiche-stock">{a.statut} · {a.stock}</SheetDescription>
+        </SheetHeader>
+        <div className="fiche-corps">
+          <span className="mono">{t.meteo}</span>
+          <p>{a.meteo}</p>
+          <span className="mono">{t.degustation}</span>
+          <p>{a.degustation}</p>
+          {allocation && (
+            <button type="button" className="btn" onClick={() => { setOuvert(false); setTimeout(() => allerA("allocation"), 340); }}>
+              {t.voirAllocation}
+            </button>
+          )}
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+}
+
 /**
  * Boucle vidéo muette (chapitres III et VI) : lecture quand 30 % visible, pause hors champ,
  * bouton pause 44 px (WCAG 2.2.2). Image fixe seule si mouvement réduit ou si la vidéo manque.
@@ -63,6 +99,7 @@ export function BoucleVideo({ video, poster, alt, sizes, pause, lecture, decorat
   video: string | null; poster: string; alt: string; sizes: string; pause: string; lecture: string; decorative?: boolean; className?: string;
 }) {
   const reduit = useMouvementReduit();
+  const monte = useMonte();
   const ref = useRef<HTMLVideoElement>(null);
   const [enPause, setEnPause] = useState(false);   // pause demandée par le visiteur
   const voulue = useRef(false);                      // miroir de enPause lisible par l'observateur
@@ -70,13 +107,17 @@ export function BoucleVideo({ video, poster, alt, sizes, pause, lecture, decorat
   useEffect(() => {
     const v = ref.current;
     if (!v) return;
+    // React ne reflète pas l'attribut `muted` : sans la propriété, Chrome refuse la lecture automatique
+    // (politique d'autoplay) et la vignette reste figée ou vide. On la pose avant toute lecture.
+    v.muted = true;
+    v.defaultMuted = true;
     const obs = new IntersectionObserver(([e]) => {
       if (e.isIntersecting && !voulue.current) v.play().catch(() => { /* lecture refusée : le poster reste */ });
       else v.pause();
     }, { threshold: 0.3 });
     obs.observe(v);
     return () => obs.disconnect();
-  }, [video, reduit]);
+  }, [video, reduit, monte]);
 
   const basculer = () => {
     const v = ref.current;
@@ -88,9 +129,9 @@ export function BoucleVideo({ video, poster, alt, sizes, pause, lecture, decorat
 
   return (
     <div className={`media ${className}`}>
-      {video && !reduit ? (
+      {video && monte && !reduit ? (
         <>
-          <video ref={ref} src={video} poster={poster} muted loop playsInline preload="metadata"
+          <video ref={ref} src={video} poster={poster} muted loop playsInline preload="auto"
             aria-hidden={decorative || undefined} aria-label={decorative ? undefined : alt} />
           <button type="button" className="media-pause" onClick={basculer} aria-label={enPause ? lecture : pause} aria-pressed={enPause}>
             {enPause ? (
