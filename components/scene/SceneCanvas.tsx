@@ -18,6 +18,14 @@ interface Props { modele: string | null; mobile: boolean; onPret: () => void; on
 /** Branche le rendu sur la boucle du moteur ; prévient le parent quand la bouteille est dessinée. */
 function Pilote({ onPret }: { onPret: () => void }) {
   const advance = useThree((s) => s.advance);
+  const lire = useThree((s) => s.get);
+  const taille = useThree((s) => s.size);
+  const dpr = useThree((s) => s.viewport.dpr);
+  // Redimensionner le tampon WebGL l'EFFACE : en frameloop="never", personne ne redessinerait.
+  // Tout changement de taille ou de densité compte donc comme une modification à rendre.
+  useEffect(() => { etat.version++; }, [taille, dpr]);
+  // En développement : état R3F lisible depuis la console (window.__veraisonR3f()) pour diagnostiquer.
+  useEffect(() => { if (process.env.NODE_ENV !== "production") Object.assign(window, { __veraisonR3f: lire }); }, [lire]);
   useEffect(() => {
     let derniere = -1;
     let pret = false;
