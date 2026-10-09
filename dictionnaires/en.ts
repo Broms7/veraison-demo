@@ -4,12 +4,12 @@ import type { Dictionnaire } from "./fr";
 
 export const en: Dictionnaire = {
   meta: {
-    titre: "Véraison 2021 — Clos Ferrugine, Pomerol",
+    titre: "Véraison 2021 · Clos Ferrugine, Pomerol",
     description:
       "Véraison, the wine of Clos Ferrugine on the Pomerol plateau. 1,200 numbered bottles. 2021 vintage allocation and tastings at the estate.",
   },
   porte: {
-    domaine: "Clos Ferrugine — Pomerol",
+    domaine: "Clos Ferrugine · Pomerol",
     titre: "Véraison",
     question: "Are you of legal drinking age in your country?",
     oui: "Yes, enter",
@@ -61,16 +61,16 @@ export const en: Dictionnaire = {
       {
         libelle: "Strength · alcohol by volume",
         chiffre: "14%",
-        texte: "The fruit carries the alcohol, not the other way round.",
+        texte: "The strength of the harvest, with no chaptalisation.",
         tiroir:
-          "Fourteen degrees is what plateau merlot gives when you wait for full ripeness without going past it. No chaptalisation, no dealcoholisation: the strength is the harvest's own.",
+          "Plateau merlot reaches fourteen degrees when Claire waits for full ripeness and stops there. She neither chaptalises nor dealcoholises: the strength is the harvest's own.",
       },
       {
         libelle: "Ageing · months in barrel",
         chiffre: "18",
         texte: "French oak, one third new, two thirds used once or twice.",
         tiroir:
-          "Eighteen months in 225-litre barrels in the cellar, with no racking for the first six months. New oak stays in the minority: it should hold the wine, not perfume it.",
+          "Eighteen months in 225-litre barrels in the cellar, with no racking for the first six months. A third new oak at most: enough to hold the wine without perfuming it.",
       },
       {
         libelle: "Blend · merlot / cabernet franc",
@@ -95,8 +95,8 @@ export const en: Dictionnaire = {
     titreMilieu: "great ",
     titreAccent: "merlot",
     paragraphes: [
-      "Pomerol has never had a classification and wants none: a handful of families, plots the size of a garden, and merlot as a mother tongue.",
-      "Twelve hundred bottles a year. Not one more: two and a half hectares give no more when you harvest them this way.",
+      "Pomerol has never had a classification and wants none: a handful of families, plots the size of a garden, and mostly merlot.",
+      "Twelve hundred bottles a year. Not one more: two and a half hectares give no more when you pick them by hand over eleven mornings.",
     ],
   },
   verre: {
@@ -106,7 +106,7 @@ export const en: Dictionnaire = {
     notes: [
       { num: "01 · The attack", titre: "Blackberry, plum, violet", texte: "Fruit first, fresh, almost crunchy. The violet arrives after twenty minutes of air." },
       { num: "03 · The finish", titre: "Liquorice, fine tannins", texte: "Forty seconds on the palate. The tannin is tight but polished: it holds without gripping." },
-      { num: "02 · The middle", titre: "Truffle, graphite", texte: "The wine tightens, turns mineral, almost sanguine. That is the iron clay speaking." },
+      { num: "02 · The middle", titre: "Truffle, graphite", texte: "The wine tightens, turns mineral, almost sanguine. That comes from the crasse de fer of the plateau." },
     ],
   },
   table: {
@@ -115,7 +115,7 @@ export const en: Dictionnaire = {
     titreAvant: "Embers, ceps",
     titreAccent: "patience",
     texte:
-      "It wants fat, salt and time. Pink Pauillac lamb, lamprey à la bordelaise, ceps with parsley and garlic, an old comté. Skip grilled fish: it would not hear it.",
+      "It wants fat, salt and time. Pink Pauillac lamb, lamprey à la bordelaise, ceps with parsley and garlic, an old comté. Skip grilled fish: the tannin flattens it.",
     cta: "See the pairings",
   },
   domaine: {
@@ -139,8 +139,8 @@ export const en: Dictionnaire = {
     fermer: "Close",
     annees: [
       { annee: "2016", etat: "dernieres", note: "Sunny, ready to open", statut: "Last bottles", fiche: "A dry, hot summer and an early harvest. The most open of the line: drink it now, decanted." },
-      { annee: "2017", etat: "epuise", note: "April frost: 400 bottles", statut: "Sold out", fiche: "The night of 27 April took two thirds of the crop. Only four hundred bottles, all gone." },
-      { annee: "2018", etat: "dernieres", note: "Mildew, then a great summer", statut: "Last bottles", fiche: "A wet spring held back row by row, then a superb summer. A dense wine, give it three more years." },
+      { annee: "2017", etat: "epuise", note: "April frost: 400 bottles", statut: "Sold out", fiche: "Frost on the night of 27 April destroyed two thirds of the crop. Four hundred bottles, all sold." },
+      { annee: "2018", etat: "dernieres", note: "Mildew, then a great summer", statut: "Last bottles", fiche: "A wet spring, treated row by row, then a great summer. A dense wine, give it three more years." },
       { annee: "2019", etat: "disponible", note: "Classic, for keeping", statut: "Available", fiche: "The estate's reference year: balance, freshness, fine tannins. Keep until 2040." },
       { annee: "2020", etat: "epuise", note: "Concentrated, dense", statut: "Sold out", fiche: "Low yields, tight berries. A powerful wine, sold en primeur in three weeks." },
     ],
@@ -214,7 +214,7 @@ export const en: Dictionnaire = {
   },
   pied: {
     lettreTitre: "The harvest letter",
-    lettreTexte: "One letter a year, the day the vintage is released. Nothing else.",
+    lettreTexte: "One letter a year, sent the day the vintage is released.",
     email: "Your email",
     inscrire: "Subscribe",
     inscrit: "Subscribed. Next letter: the day the vintage is released.",
@@ -226,7 +226,7 @@ export const en: Dictionnaire = {
     ],
     // Mention loi Évin : la phrase française fait foi, la traduction l'accompagne.
     evin: "L'abus d'alcool est dangereux pour la santé, à consommer avec modération. Alcohol abuse is dangerous for your health; drink in moderation.",
-    credit: "© 2026 Clos Ferrugine — fictional estate, a Kaïro concept",
+    credit: "© 2026 Clos Ferrugine. A fictional estate, a Kaïro concept",
     geant: "Ferrugine",
   },
   repli: "Bottle of Véraison 2021, Clos Ferrugine",

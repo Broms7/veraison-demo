@@ -3,12 +3,12 @@
 
 export const fr = {
   meta: {
-    titre: "Véraison 2021 — Clos Ferrugine, Pomerol",
+    titre: "Véraison 2021 · Clos Ferrugine, Pomerol",
     description:
       "Véraison, cuvée du Clos Ferrugine sur le plateau de Pomerol. 1 200 bouteilles numérotées. Allocation du millésime 2021 et dégustations au domaine.",
   },
   porte: {
-    domaine: "Clos Ferrugine — Pomerol",
+    domaine: "Clos Ferrugine · Pomerol",
     titre: "Véraison",
     question: "Avez-vous l'âge légal pour consommer de l'alcool dans votre pays ?",
     oui: "Oui, entrer",
@@ -60,16 +60,16 @@ export const fr = {
       {
         libelle: "Degré · alcool en volume",
         chiffre: "14%",
-        texte: "Le fruit porte l'alcool, pas l'inverse.",
+        texte: "Le degré de la vendange, sans chaptalisation.",
         tiroir:
-          "Quatorze degrés, c'est ce que donne le merlot du plateau quand on attend sa pleine maturité sans la dépasser. Le vin n'est ni chaptalisé ni désalcoolisé : le degré est celui de la vendange.",
+          "Le merlot du plateau atteint quatorze degrés quand Claire attend sa pleine maturité sans la dépasser. Elle ne chaptalise pas et ne désalcoolise pas : le degré est celui de la vendange.",
       },
       {
         libelle: "Élevage · mois en barrique",
         chiffre: "18",
         texte: "Chêne français, un tiers neuf, deux tiers d'un et deux vins.",
         tiroir:
-          "Dix-huit mois en barriques de 225 litres, au chai, sans soutirage les six premiers mois. Le bois neuf reste minoritaire : il doit tenir le vin, pas le parfumer.",
+          "Dix-huit mois en barriques de 225 litres, au chai, sans soutirage les six premiers mois. Un tiers de bois neuf au plus : de quoi tenir le vin sans le parfumer.",
       },
       {
         libelle: "Assemblage · merlot / cabernet franc",
@@ -82,7 +82,7 @@ export const fr = {
         chiffre: "2028",
         texte: "et 2045. Carafer une heure avant.",
         tiroir:
-          "Fermé dans sa jeunesse, le vin s'ouvre vers sept ans. Servir à 16 °C, carafé une heure. Les bouteilles se gardent couchées, à l'abri de la lumière, autour de 13 °C.",
+          "Fermé dans sa jeunesse, le vin s'ouvre vers sept ans. Servir à 16 °C, carafé une heure. Gardez les bouteilles couchées, à l'abri de la lumière, autour de 13 °C.",
       },
     ],
   },
@@ -94,8 +94,8 @@ export const fr = {
     titreMilieu: "grand ",
     titreAccent: "merlot",
     paragraphes: [
-      "Pomerol n'a jamais eu de classement et n'en veut pas : quelques familles, des parcelles grandes comme un jardin, et le merlot comme langue maternelle.",
-      "Mille deux cents bouteilles par an. Pas une de plus : deux hectares et demi n'en donnent pas davantage quand on les vendange ainsi.",
+      "Pomerol n'a jamais eu de classement et n'en veut pas : quelques familles, des parcelles grandes comme un jardin, et du merlot surtout.",
+      "Mille deux cents bouteilles par an. Pas une de plus : deux hectares et demi n'en donnent pas davantage quand on les vendange à la main sur onze matins.",
     ],
   },
   verre: {
@@ -105,7 +105,7 @@ export const fr = {
     notes: [
       { num: "01 · L'attaque", titre: "Mûre, prune, violette", texte: "Le fruit d'abord, frais, presque croquant. La violette arrive après vingt minutes d'air." },
       { num: "03 · La finale", titre: "Réglisse, tanins fins", texte: "Quarante secondes en bouche. Le tanin est serré mais poli : il tient sans accrocher." },
-      { num: "02 · Le milieu", titre: "Truffe, graphite", texte: "Le vin se resserre, devient minéral, presque sanguin. C'est la crasse de fer qui parle." },
+      { num: "02 · Le milieu", titre: "Truffe, graphite", texte: "Le vin se resserre, devient minéral, presque sanguin. On le doit à la crasse de fer du plateau." },
     ],
   },
   table: {
@@ -114,7 +114,7 @@ export const fr = {
     titreAvant: "Braise, cèpes",
     titreAccent: "patience",
     texte:
-      "Il veut du gras, du sel et du temps. Agneau de Pauillac rosé, lamproie à la bordelaise, cèpes à la persillade, un vieux comté. Évitez le poisson grillé : il ne l'entendrait pas.",
+      "Il veut du gras, du sel et du temps. Agneau de Pauillac rosé, lamproie à la bordelaise, cèpes à la persillade, un vieux comté. Évitez le poisson grillé : le tanin écrase sa chair.",
     cta: "Voir les accords",
   },
   domaine: {
@@ -137,9 +137,9 @@ export const fr = {
     titreAccent: "sol",
     fermer: "Fermer",
     annees: [
-      { annee: "2016", etat: "dernieres", note: "Solaire, à ouvrir", statut: "Dernières", fiche: "Un été sec et chaud, une vendange précoce. Le plus ouvert de la lignée : on peut le boire dès maintenant, carafé." },
-      { annee: "2017", etat: "epuise", note: "Gel d'avril : 400 bouteilles", statut: "Épuisé", fiche: "La nuit du 27 avril a pris deux tiers de la récolte. Quatre cents bouteilles seulement, toutes parties." },
-      { annee: "2018", etat: "dernieres", note: "Mildiou, puis grand été", statut: "Dernières", fiche: "Un printemps humide qu'il a fallu tenir rang par rang, puis un été magnifique. Un vin dense, à attendre encore trois ans." },
+      { annee: "2016", etat: "dernieres", note: "Solaire, à ouvrir", statut: "Dernières", fiche: "Un été sec et chaud, une vendange précoce. Le plus ouvert de la lignée : buvez-le dès maintenant, carafé." },
+      { annee: "2017", etat: "epuise", note: "Gel d'avril : 400 bouteilles", statut: "Épuisé", fiche: "Le gel du 27 avril a détruit deux tiers de la récolte. Quatre cents bouteilles, toutes vendues." },
+      { annee: "2018", etat: "dernieres", note: "Mildiou, puis grand été", statut: "Dernières", fiche: "Un printemps humide, traité rang par rang, puis un grand été. Un vin dense, à attendre encore trois ans." },
       { annee: "2019", etat: "disponible", note: "Classique, à attendre", statut: "Disponible", fiche: "L'année de référence du domaine : équilibre, fraîcheur, tanins fins. À garder jusqu'en 2040." },
       { annee: "2020", etat: "epuise", note: "Concentré, dense", statut: "Épuisé", fiche: "Petits rendements, baies serrées. Un vin puissant, sorti en primeur et vendu en trois semaines." },
     ],
@@ -213,7 +213,7 @@ export const fr = {
   },
   pied: {
     lettreTitre: "La lettre des vendanges",
-    lettreTexte: "Une lettre par an, le jour où le millésime sort. Rien d'autre.",
+    lettreTexte: "Une lettre par an, envoyée le jour où le millésime sort.",
     email: "Votre e-mail",
     inscrire: "S'inscrire",
     inscrit: "Inscrit. Prochaine lettre : le jour de la sortie du millésime.",
@@ -224,7 +224,7 @@ export const fr = {
       { titre: "Lire", liens: ["Journal", "Millésimes", "Presse"] },
     ],
     evin: "L'abus d'alcool est dangereux pour la santé, à consommer avec modération.",
-    credit: "© 2026 Clos Ferrugine — domaine fictif, concept Kaïro",
+    credit: "© 2026 Clos Ferrugine. Domaine fictif, concept Kaïro",
     geant: "Ferrugine",
   },
   repli: "Bouteille de Véraison 2021, Clos Ferrugine",
