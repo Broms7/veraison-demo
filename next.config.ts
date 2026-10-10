@@ -21,7 +21,9 @@ const nextConfig: NextConfig = {
       headers: [
         { key: "X-Content-Type-Options", value: "nosniff" },
         { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-        { key: "X-Frame-Options", value: "DENY" },
+        // Intégrable seulement par la vitrine Kaïro (fiche projet en iframe) : kaïro.fr en punycode, plus localhost pour la preview.
+        // Remplace X-Frame-Options: DENY, qui bloquait aussi la vitrine.
+        { key: "Content-Security-Policy", value: "frame-ancestors 'self' https://xn--karo-6pa.fr https://www.xn--karo-6pa.fr http://localhost:*" },
         { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
       ],
     }];
