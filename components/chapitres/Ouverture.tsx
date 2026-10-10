@@ -3,13 +3,13 @@
 // la bouteille y passe), bandeau défilant derrière la bouteille. Libellés « Rouge… / Millésime… » retirés.
 import { Chapitre } from "./Chapitre";
 import { Compteur } from "./Compteur";
-import { Sceau, TitreOuverture } from "@/components/ilots/Ilots";
+import { PauseBandeau, Sceau, TitreOuverture } from "@/components/ilots/Ilots";
 import type { PoseChapitre } from "@/lib/poses";
 import type { Dictionnaire, Langue } from "@/dictionnaires";
 
 const POSE: PoseChapitre = { x: 0, y: 0.04, r: -18, s: 1, label: 0 };
 
-export function Ouverture({ t, langue }: { t: Dictionnaire["ouverture"]; langue: Langue }) {
+export function Ouverture({ t, langue, tv }: { t: Dictionnaire["ouverture"]; langue: Langue; tv: Dictionnaire["video"] }) {
   const [ha, bouteilles, mois] = t.indicateurs;
   // Piste du bandeau : les entrées séparées par le carré oxyde du logotype ; dupliquée pour boucler.
   const piste = t.bandeau.flatMap((e) => [<span key={e}>{e}</span>, <i key={`${e}-carre`} />]);
@@ -34,6 +34,7 @@ export function Ouverture({ t, langue }: { t: Dictionnaire["ouverture"]; langue:
         <div className="piste-b">{piste}</div>
         <div className="piste-b">{piste}</div>
       </div>
+      <PauseBandeau pause={tv.bandeauPause} lecture={tv.bandeauLecture} />
     </Chapitre>
   );
 }

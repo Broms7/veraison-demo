@@ -27,7 +27,7 @@ export const fr = {
     accueil: "Clos Ferrugine, retour en haut",
     evitement: "Aller à la réservation",
   },
-  video: { pause: "Mettre la vidéo en pause", lecture: "Relancer la vidéo" },
+  video: { pause: "Mettre la vidéo en pause", lecture: "Relancer la vidéo", bandeauPause: "Arrêter le bandeau", bandeauLecture: "Relancer le bandeau" },
   rail: "Niveau",
   sommaire: [
     { ancre: "ouverture", titre: "I · Ouverture" },
@@ -150,8 +150,8 @@ export const fr = {
     titreAccent: "temps",
     notes: [
       { num: "01 · L'attaque", titre: "Mûre, prune, violette", texte: "Le fruit d'abord, frais, presque croquant. La violette arrive après vingt minutes d'air." },
-      { num: "03 · La finale", titre: "Réglisse, tanins fins", texte: "Quarante secondes en bouche. Le tanin est serré mais poli : il tient sans accrocher." },
       { num: "02 · Le milieu", titre: "Truffe, graphite", texte: "Le vin se resserre, devient minéral, presque sanguin. On le doit à la crasse de fer du plateau." },
+      { num: "03 · La finale", titre: "Réglisse, tanins fins", texte: "Quarante secondes en bouche. Le tanin est serré mais poli : il tient sans accrocher." },
     ],
   },
   roue: {
@@ -336,7 +336,7 @@ export const fr = {
     formules: [
       { id: "decouverte", num: "01", nom: "La découverte", meta: "45 min · trois millésimes au chai", prix: 25 },
       { id: "chai", num: "02", nom: "Le chai", meta: "1 h 30 · visite, cinq vins dont un sur barrique", prix: 60 },
-      { id: "table", num: "03", nom: "La longue table", meta: "3 h · vendanges du matin, déjeuner vigneron", prix: 150 },
+      { id: "table", num: "03", nom: "La longue table", meta: "3 h · le geste du mois dans les rangs, déjeuner au chai", prix: 150 },
     ],
     date: "Date",
     ferme: "Fermé dimanche et lundi",
@@ -354,7 +354,7 @@ export const fr = {
     demo: "Démonstration : aucun paiement, aucune réservation transmise",
     verification: "Vérification…",
     confirmationSurtitre: "Réservation notée",
-    confirmationTitre: "À {jour}, {heure}",
+    confirmationTitre: "Rendez-vous {jour} à {heure}",
     numero: "N° R-0417",
     adresse: "Clos Ferrugine, route de Catusseau, 33500 Pomerol",
     moins: "Retirer une personne",

@@ -14,15 +14,15 @@ function CarteNote({ n }: { n: Note }) {
   return (
     <div className="note carte-papier front" data-apparition="">
       <span className="mono vin">{n.num}</span>
-      <h4>{n.titre}</h4>
+      <h3>{n.titre}</h3>
       <p>{n.texte}</p>
     </div>
   );
 }
 
 export function DansLeVerre({ t }: { t: Dictionnaire["verre"] }) {
-  // Ordre du wireframe : attaque et finale à gauche, milieu à droite plus bas.
-  const [attaque, finale, milieu] = t.notes;
+  // Ordre DOM = ordre de lecture (01 attaque, 02 milieu, 03 finale) ; la grille place 01 et 03 à gauche,
+  // 02 à droite plus bas (recette n° 16 : un lecteur d'écran lisait la finale avant le milieu).
   return (
     <Chapitre id="verre" folio="V" pose={POSE} registre className="notes">
       <div className="entete feuille">
@@ -30,9 +30,7 @@ export function DansLeVerre({ t }: { t: Dictionnaire["verre"] }) {
         <h2 className="titre">{t.titreAvant}<span className="vin">{t.titreAccent}</span></h2>
       </div>
       <div className="temps">
-        <div className="pile"><CarteNote n={attaque} /><CarteNote n={finale} /></div>
-        <div />
-        <div className="pile d"><CarteNote n={milieu} /></div>
+        {t.notes.map((n, i) => <div key={n.num} className={`temps-${i + 1}`}><CarteNote n={n} /></div>)}
       </div>
     </Chapitre>
   );

@@ -22,7 +22,8 @@ export function Annee({ t }: { t: Dictionnaire["annee"] }) {
         <div className="regle-mois" aria-hidden="true">
           {t.mois.map((m) => <span key={m.nom} className="mono">{m.nom[0]}</span>)}
         </div>
-        <div className="piste">
+        {/* Région focusable : au clavier, la rangée native (mobile) défile aux flèches (recette n° 17) */}
+        <div className="piste" tabIndex={0} role="region" aria-label={t.surtitre}>
           <div className="panneau feuille">
             <Surtitre folio="VIII">{t.surtitre}</Surtitre>
             <h2 className="titre">{t.titreAvant}<span className="vin">{t.titreAccent}</span></h2>

@@ -219,7 +219,8 @@ export default function Habillage() {
         if (citation && signature) {
           gsap.set(signature, { opacity: 0 });
           SplitText.create(citation, {
-            type: "lines", mask: "lines", autoSplit: true,
+            // aria "none" : pas d'aria-label posé sur le <p> (interdit sur un paragraphe, recette n° 17)
+            type: "lines", mask: "lines", autoSplit: true, aria: "none",
             onSplit: (self) => gsap.timeline({ scrollTrigger: { trigger: manifeste, start: "top 50%", once: true } })
               .from(self.lines, { yPercent: 105, duration: 0.9, stagger: 0.06, ease: EASE_SORTIE })
               .to(signature, { opacity: 1, duration: 0.4, ease: EASE_SORTIE }, "+=0.2"),

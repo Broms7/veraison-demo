@@ -19,6 +19,7 @@ type T = Dictionnaire["resa"];
 const PERSONNES_MIN = 1;
 const PERSONNES_MAX = 8;
 const MOIS_OUVERTS = 3;          // plage réservable : aujourd'hui + 3 mois
+const DELAI_JOURS = 2;           // « au plus tard 48 heures avant »
 const DUREE_VERIFICATION = 600;  // ms simulées avant la confirmation
 
 /** Locale d'affichage : anglais britannique pour /en (semaine qui commence le lundi, « €110 »). */
@@ -34,8 +35,13 @@ function Agenda({ t, langue, choix, maj }: { t: T; langue: Langue; choix: Choix;
     if (!monte) return null;
     const auj = new Date();
     auj.setHours(0, 0, 0, 0);
+    // Réservation au plus tard 48 h avant (FAQ, XIV) : premier jour possible = J + 2.
+    const premier = new Date(auj.getFullYear(), auj.getMonth(), auj.getDate() + DELAI_JOURS);
     const fin = new Date(auj.getFullYear(), auj.getMonth() + MOIS_OUVERTS + 1, 0);
-    return { auj, fin, fermes: [{ before: auj }, { after: fin }, { dayOfWeek: [0, 1] }] };
+    // Fermeture annuelle du 20 décembre au 5 janvier (annoncée en XIV), pour l'hiver en cours et le suivant.
+    const an = auj.getFullYear();
+    const hivers = [an - 1, an].map((a) => ({ from: new Date(a, 11, 20), to: new Date(a + 1, 0, 5) }));
+    return { auj, fin, fermes: [{ before: premier }, { after: fin }, { dayOfWeek: [0, 1] }, ...hivers] };
   }, [monte]);
 
   return (
@@ -97,6 +103,9 @@ export function ParcoursReservation({ t, langue }: { t: T; langue: Langue }) {
   const [verification, setVerification] = useState(false);
   const [confirme, setConfirme] = useState(false);
   const titreConfirmation = useRef<HTMLHeadingElement>(null);
+  // Déclencheurs à qui rendre le focus à la fermeture de la confirmation (recette n° 7)
+  const boutonReserver = useRef<HTMLButtonElement>(null);
+  const boutonAgenda = useRef<HTMLButtonElement>(null);
   usePauseScroll(tiroir || confirme);
   // Mise à jour fonctionnelle : deux actions rapprochées ne s'écrasent pas.
   const maj = (p: (c: Choix) => Partial<Choix>) => setChoix((c) => ({ ...c, ...p(c) }));
@@ -130,7 +139,7 @@ export function ParcoursReservation({ t, langue }: { t: T; langue: Langue }) {
         <b className="total" aria-live="polite">{total}</b>
         <p className="mono recap-demo">{t.demo}</p>
       </div>
-      <button className="btn confirmer" disabled={!choix.date || verification} aria-busy={verification || undefined} onClick={confirmer}>
+      <button ref={boutonReserver} className="btn confirmer" disabled={!choix.date || verification} aria-busy={verification || undefined} onClick={confirmer}>
         {verification ? t.verification : t.reserver}
       </button>
       <p className="mono manque-date" role="status">{choix.date ? "" : t.aChoisir}</p>
@@ -153,7 +162,7 @@ export function ParcoursReservation({ t, langue }: { t: T; langue: Langue }) {
       <div className="agenda">
         {mobile ? (
           <Drawer open={tiroir} onOpenChange={setTiroir}>
-            <DrawerTrigger className="btn btn-secondaire ouvrir-agenda">{t.ouvrirAgenda}</DrawerTrigger>
+            <DrawerTrigger ref={boutonAgenda} className="btn btn-secondaire ouvrir-agenda">{t.ouvrirAgenda}</DrawerTrigger>
             <DrawerContent className="tiroir-agenda">
               <DrawerTitle className="titre tiroir-titre">{formule.nom}</DrawerTitle>
               <Agenda t={t} langue={langue} choix={choix} maj={maj} />
@@ -170,7 +179,8 @@ export function ParcoursReservation({ t, langue }: { t: T; langue: Langue }) {
 
       <Dialog open={confirme} onOpenChange={setConfirme}>
         <DialogContent className="confirmation" showCloseButton={false}
-          onOpenAutoFocus={(e) => { e.preventDefault(); titreConfirmation.current?.focus(); }}>
+          onOpenAutoFocus={(e) => { e.preventDefault(); titreConfirmation.current?.focus(); }}
+          onCloseAutoFocus={(e) => { e.preventDefault(); (mobile ? boutonAgenda : boutonReserver).current?.focus(); }}>
           <Sceau texte="CLOS FERRUGINE · PLATEAU DE POMEROL ·" className="sceau-confirmation" tourne={false} />
           <p className="surtitre">{t.confirmationSurtitre}</p>
           <DialogTitle ref={titreConfirmation} tabIndex={-1} className="titre">

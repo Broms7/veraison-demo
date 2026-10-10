@@ -55,13 +55,13 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
 
       <PorteAge t={t.porte} libelleLangue={t.tete.langue} />
       <Inerte>
-        <a className="evitement" href="#resa">{t.tete.evitement}</a>
+        <nav aria-label={t.tete.evitement}><a className="evitement" href="#resa">{t.tete.evitement}</a></nav>
         <EnTete t={t.tete} sommaire={t.sommaire} />
         <Rail libelle={t.rail} />
         <Scene modele={MODELE} alt={t.repli} />
 
         <main>
-          <Ouverture t={t.ouverture} langue={lang} />
+          <Ouverture t={t.ouverture} langue={lang} tv={t.video} />
           <Cuvee t={t.cuvee} />
           <Sol t={t.sol} />
           <Geste t={t.geste} video={VIDEO_CLAIRE} tv={t.video} />

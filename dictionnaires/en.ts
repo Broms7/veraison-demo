@@ -28,7 +28,7 @@ export const en: Dictionnaire = {
     accueil: "Clos Ferrugine, back to top",
     evitement: "Skip to booking",
   },
-  video: { pause: "Pause the video", lecture: "Play the video" },
+  video: { pause: "Pause the video", lecture: "Play the video", bandeauPause: "Stop the scrolling band", bandeauLecture: "Restart the scrolling band" },
   rail: "Level",
   sommaire: [
     { ancre: "ouverture", titre: "I · Opening" },
@@ -151,8 +151,8 @@ export const en: Dictionnaire = {
     titreAccent: "beats",
     notes: [
       { num: "01 · The attack", titre: "Blackberry, plum, violet", texte: "Fruit first, fresh, almost crunchy. The violet arrives after twenty minutes of air." },
-      { num: "03 · The finish", titre: "Liquorice, fine tannins", texte: "Forty seconds on the palate. The tannin is tight but polished: it holds without gripping." },
       { num: "02 · The middle", titre: "Truffle, graphite", texte: "The wine tightens, turns mineral, almost sanguine. That comes from the crasse de fer of the plateau." },
+      { num: "03 · The finish", titre: "Liquorice, fine tannins", texte: "Forty seconds on the palate. The tannin is tight but polished: it holds without gripping." },
     ],
   },
   roue: {
@@ -337,7 +337,7 @@ export const en: Dictionnaire = {
     formules: [
       { id: "decouverte", num: "01", nom: "The discovery", meta: "45 min · three vintages in the chai, our barrel cellar", prix: 25 },
       { id: "chai", num: "02", nom: "The chai", meta: "90 min · a tour, five wines, one drawn straight from the cask", prix: 60 },
-      { id: "table", num: "03", nom: "The long table", meta: "3 h · morning harvest, winemaker's lunch", prix: 150 },
+      { id: "table", num: "03", nom: "The long table", meta: "3 h · that month's task in the rows, lunch in the chai", prix: 150 },
     ],
     date: "Date",
     ferme: "Closed Sunday and Monday",
@@ -355,7 +355,7 @@ export const en: Dictionnaire = {
     demo: "Demonstration: no payment taken, no booking sent",
     verification: "Checking…",
     confirmationSurtitre: "Booking noted",
-    confirmationTitre: "See you {jour}, {heure}",
+    confirmationTitre: "See you {jour} at {heure}",
     numero: "No. R-0417",
     adresse: "Clos Ferrugine, route de Catusseau, 33500 Pomerol, France",
     moins: "Remove a guest",

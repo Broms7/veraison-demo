@@ -133,7 +133,7 @@ export function BoucleVideo({ video, poster, alt, sizes, pause, lecture, decorat
         <>
           <video ref={ref} src={video} poster={poster} muted loop playsInline preload="auto"
             aria-hidden={decorative || undefined} aria-label={decorative ? undefined : alt} />
-          <button type="button" className="media-pause" onClick={basculer} aria-label={enPause ? lecture : pause} aria-pressed={enPause}>
+          <button type="button" className="media-pause" onClick={basculer} aria-label={enPause ? lecture : pause}>
             {enPause ? (
               <svg width="14" height="16" viewBox="0 0 14 16" aria-hidden="true"><path d="M1 1 13 8 1 15Z" fill="currentColor" /></svg>
             ) : (
@@ -145,6 +145,23 @@ export function BoucleVideo({ video, poster, alt, sizes, pause, lecture, decorat
         <Image src={poster} alt={decorative ? "" : alt} fill sizes={sizes} />
       )}
     </div>
+  );
+}
+
+/** Pause du bandeau défilant de l'ouverture (WCAG 2.2.2) : pose data-arret sur .bandeau (CSS). */
+export function PauseBandeau({ pause, lecture }: { pause: string; lecture: string }) {
+  const [arret, setArret] = useState(false);
+  return (
+    <button type="button" className="bandeau-pause" aria-label={arret ? lecture : pause} onClick={() => {
+      document.querySelector(".bandeau")?.toggleAttribute("data-arret", !arret);
+      setArret(!arret);
+    }}>
+      {arret ? (
+        <svg width="12" height="14" viewBox="0 0 14 16" aria-hidden="true"><path d="M1 1 13 8 1 15Z" fill="currentColor" /></svg>
+      ) : (
+        <svg width="12" height="14" viewBox="0 0 14 16" aria-hidden="true"><path d="M2 1h3v14H2zM9 1h3v14H9z" fill="currentColor" /></svg>
+      )}
+    </button>
   );
 }
 
@@ -163,7 +180,8 @@ export function TitreOuverture({ texte }: { texte: string }) {
     split.masks.forEach((m) => { (m as HTMLElement).style.paddingTop = "0.3em"; (m as HTMLElement).style.marginTop = "-0.3em"; });
     gsap.from(split.chars, { yPercent: 105, duration: 0.8, ease: EASE_SORTIE, stagger: 0.04, delay: 0.9 });
   }, { dependencies: [entree], scope: ref });
-  return <h1 ref={ref} className="titre titre-ouverture">{texte}</h1>;
+  // tabIndex -1 : le focus y est posé quand la porte d'âge s'ouvre (recette n° 7)
+  return <h1 ref={ref} className="titre titre-ouverture" tabIndex={-1}>{texte}</h1>;
 }
 
 /** Sceau du domaine : texte sur cercle + monogramme F dans le clos. Tourne avec le scroll (0,06°/px). */

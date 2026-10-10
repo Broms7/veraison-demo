@@ -19,7 +19,7 @@ export function Journal({ t }: { t: Dictionnaire["journal"] }) {
             </div>
             <span className="mono num">N° {String(i + 1).padStart(2, "0")}</span>
             <span className="mono">{a.meta}</span>
-            <h4>{a.titre}</h4>
+            <h3>{a.titre}</h3>
           </a>
         ))}
       </div>

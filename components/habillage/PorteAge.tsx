@@ -24,7 +24,12 @@ export function PorteAge({ t, libelleLangue }: { t: Dictionnaire["porte"]; libel
           <p className="porte-question">{t.question}</p>
           <div className="choix">
             {/* autoFocus : la porte est la première chose à traverser au clavier */}
-            <button className="btn btn-oui" onClick={entrer} autoFocus>{t.oui}</button>
+            <button className="btn btn-oui" autoFocus onClick={() => {
+              entrer();
+              // Le reste du site cesse d'être inerte au rendu suivant : le focus passe alors au titre,
+              // au lieu de tomber sur <body> (recette n° 7).
+              window.setTimeout(() => document.querySelector<HTMLElement>("#ouverture h1")?.focus({ preventScroll: true }), 60);
+            }}>{t.oui}</button>
             <button className="btn btn-non" onClick={() => setRefus(true)}>{t.non}</button>
           </div>
           <p className="mono porte-refus" role="status">{refus ? t.refus : ""}</p>
