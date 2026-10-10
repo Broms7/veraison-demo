@@ -249,7 +249,10 @@ export default function Habillage() {
           x: () => -distance(), ease: "none",
           scrollTrigger: {
             id: "annee", trigger: annee, start: "top top", end: () => `+=${distance()}`,
-            pin: true, scrub: 0.8, anticipatePin: 1, invalidateOnRefresh: true,
+            // On épingle le conteneur INTÉRIEUR (.collant), pas la section : la section reste dans le flux
+            // et contient l'espaceur, donc #annee (menu, liens profonds) pointe toujours sur le début
+            // de la frise, même quand on y arrive depuis le bas (recette n° 3).
+            pin: annee.querySelector<HTMLElement>(".collant") ?? true, scrub: 0.8, anticipatePin: 1, invalidateOnRefresh: true,
             // Les déclencheurs créés AVANT celui-ci (en-tête, titres) sont plus bas dans la page :
             // l'épinglage doit être recalculé en premier pour que leurs positions comptent son espaceur.
             refreshPriority: 1,
@@ -304,7 +307,20 @@ export default function Habillage() {
       piste.addEventListener("scroll", surRangee, { passive: true });
       // Le pin-spacer change la hauteur du document : tout le monde re-mesure (dont le moteur de poses),
       // dans l'ordre de la page.
-      const image = requestAnimationFrame(() => { ScrollTrigger.sort(); ScrollTrigger.refresh(); });
+      const image = requestAnimationFrame(() => {
+        ScrollTrigger.sort();
+        ScrollTrigger.refresh();
+        // Lien profond (/fr#allocation…) : le navigateur a sauté vers l'ancre AVANT l'espaceur de la frise,
+        // donc 4 écrans trop tôt (recette n° 2). On rejoue le saut une fois les positions définitives.
+        const id = decodeURIComponent(location.hash.slice(1));
+        const cible = id ? document.getElementById(id) : null;
+        if (cible) {
+          const y = cible.getBoundingClientRect().top + scrollY;
+          const lenis = getLenis();
+          if (lenis) lenis.scrollTo(y, { immediate: true, force: true });
+          else window.scrollTo(0, y);
+        }
+      });
       nettoyages.push(() => cancelAnimationFrame(image));
       nettoyages.push(() => piste.removeEventListener("scroll", surRangee));
     }
