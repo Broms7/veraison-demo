@@ -713,6 +713,17 @@ html[lang="en"] .critique blockquote p::after { content: "\201D"; }
 .article .num { display: block; color: var(--oxyde); }
 
 /* ---------- phase 3 : tablette et mobile ---------- */
+/* Écrans bas : l'indice « Défiler » chevauchait le libellé des bouteilles */
+@media (max-height: 820px) { .ouverture .indice { display: none; } }
+@media (min-width: 760px) and (max-width: 1099.98px) and (orientation: landscape) {
+  .baseline { max-width: 26ch; font-size: 16px; }
+}
+@media (min-width: 760px) and (max-width: 1099.98px) and (orientation: portrait) {
+  /* Tablette : la bouteille couvre le centre et la droite ; la baseline passe dans la colonne gauche,
+     sous les compteurs (l'indice « Défiler » cède sa place). */
+  .baseline { right: auto; left: calc(var(--pad) + 30px); top: calc(62vh + 190px); max-width: 26ch; font-size: 16px; text-align: left; }
+  .ouverture .indice { display: none; }
+}
 @media (max-width: 1099.98px) {
   /* Roue (recette n° 4) : une colonne (roue, puis carte de texte), la 3e colonne disparaît, rien ne déborde */
   .roue-grille { grid-template-columns: minmax(0, 1fr); justify-items: center; }
