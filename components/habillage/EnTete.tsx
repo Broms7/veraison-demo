@@ -11,9 +11,10 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useSite } from "@/components/site/Fournisseur";
 import { allerA, usePauseScroll } from "@/lib/scroll";
+import { totalArticles, useAllocation } from "@/lib/allocation";
 import { langues, type Dictionnaire, type Langue } from "@/dictionnaires";
 
-interface Props { t: Dictionnaire["tete"]; sommaire: Dictionnaire["sommaire"] }
+interface Props { t: Dictionnaire["tete"]; sommaire: Dictionnaire["sommaire"]; ouvrirLibelle: string }
 
 const LIGNE_TETE = 40; // px depuis le haut : hauteur de lecture de l'en-tête
 
@@ -44,8 +45,9 @@ function Logotype({ t }: { t: Props["t"] }) {
   );
 }
 
-export function EnTete({ t, sommaire }: Props) {
-  const { langue, panier } = useSite();
+export function EnTete({ t, sommaire, ouvrirLibelle }: Props) {
+  const { langue, ouvrirPanier } = useSite();
+  const articles = totalArticles(useAllocation());
   const [menu, setMenu] = useState(false);
   usePauseScroll(menu);
 
@@ -66,10 +68,13 @@ export function EnTete({ t, sommaire }: Props) {
     return () => declencheurs.forEach((d) => d.kill());
   }, []);
 
+  // « Allocation (n) » ouvre le récapitulatif (components/allocation/Panier.tsx) ; depuis le menu,
+  // on ferme d'abord le sommaire (son verrou de scroll et son focus) avant d'ouvrir le panier.
   const lienPanier = (
-    <a className="mono panier" href="#allocation">
-      {t.allocation} (<span aria-live="polite">{panier}</span>)
-    </a>
+    <button type="button" className="mono panier" aria-haspopup="dialog" aria-label={`${ouvrirLibelle} (${articles})`}
+      onClick={() => { if (menu) { setMenu(false); window.setTimeout(() => ouvrirPanier(true), 320); } else ouvrirPanier(true); }}>
+      {t.allocation} (<span aria-live="polite">{articles}</span>)
+    </button>
   );
 
   return (
@@ -77,7 +82,7 @@ export function EnTete({ t, sommaire }: Props) {
       <div className="marque">
         <Sheet open={menu} onOpenChange={setMenu}>
           <SheetTrigger className="burger" aria-label={t.menu} />
-          <SheetContent side="left" className="menu">
+          <SheetContent side="left" className="menu" data-lenis-prevent="">
             <SheetTitle className="mono">{t.sommaire}</SheetTitle>
             <SheetDescription className="sr-only">{t.marque}</SheetDescription>
             <nav>

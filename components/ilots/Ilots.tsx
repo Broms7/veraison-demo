@@ -11,26 +11,32 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import { useSite } from "@/components/site/Fournisseur";
 import { abonner, etat } from "@/lib/moteur";
 import { allerA, usePauseScroll } from "@/lib/scroll";
+import { changerQuantite, useAllocation } from "@/lib/allocation";
 import { useMouvementReduit } from "@/lib/media";
 
 gsap.registerPlugin(useGSAP, SplitText, CustomEase);
 const EASE_SORTIE = CustomEase.create("sortie", "0.2,0.7,0.2,1");   // = --ease-sortie
 
-/** Ajoute une unité au panier d'allocation (§3.3 bouton contour) : « Ajouté · n » pendant 1,6 s. */
-export function BoutonAjout({ libelle, libelleAjoute, className = "btn-contour" }: { libelle: string; libelleAjoute?: string; className?: string }) {
-  const { ajouter, panier } = useSite();
+/** Ajoute une unité d'un format à l'allocation (§3.3 bouton contour) : « Ajouté · n » pendant 1,6 s.
+ *  Au maximum du format, le bouton se désactive et le dit (« Maximum atteint »). */
+export function BoutonAjout({ format, max, libelle, libelleAjoute, libelleMax, className = "btn-contour" }: {
+  format: string; max: number; libelle: string; libelleAjoute?: string; libelleMax: string; className?: string;
+}) {
+  const quantites = useAllocation();
+  const q = quantites[format] ?? 0;
   const [fait, setFait] = useState(false);
   const minuteur = useRef(0);
   useEffect(() => () => window.clearTimeout(minuteur.current), []);
+  if (q >= max) return <button className={className} disabled>{libelleMax}</button>;
   return (
     <button className={className} onClick={() => {
-      ajouter();
+      changerQuantite(format, 1, max);
       if (!libelleAjoute) return;
       setFait(true);
       window.clearTimeout(minuteur.current);
       minuteur.current = window.setTimeout(() => setFait(false), 1600);
     }}>
-      {fait && libelleAjoute ? `${libelleAjoute} · ${panier}` : libelle}
+      {fait && libelleAjoute ? `${libelleAjoute} · ${q}` : libelle}
     </button>
   );
 }

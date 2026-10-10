@@ -44,7 +44,7 @@ export function Allocation({ t, langue }: { t: Dictionnaire["allocation"]; langu
               <>
                 <span className="q">{f.note}</span>
                 <span className="prix">{prix.format(f.prix)}</span>
-                <BoutonAjout libelle={t.ajouter} libelleAjoute={t.ajoute} />
+                <BoutonAjout format={f.id} max={f.max} libelle={t.ajouter} libelleAjoute={t.ajoute} libelleMax={t.maximum} />
               </>
             )}
           </div>

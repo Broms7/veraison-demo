@@ -9,6 +9,7 @@ import { Reveals } from "@/components/site/Reveals";
 import { PorteAge, Inerte } from "@/components/habillage/PorteAge";
 import { EnTete } from "@/components/habillage/EnTete";
 import { Rail } from "@/components/habillage/Rail";
+import { Panier } from "@/components/allocation/Panier";
 import { Scene } from "@/components/scene/Scene";
 import { Ouverture } from "@/components/chapitres/Ouverture";
 import { Cuvee } from "@/components/chapitres/Cuvee";
@@ -56,13 +57,14 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
       <PorteAge t={t.porte} libelleLangue={t.tete.langue} />
       <Inerte>
         <nav aria-label={t.tete.evitement}><a className="evitement" href="#resa">{t.tete.evitement}</a></nav>
-        <EnTete t={t.tete} sommaire={t.sommaire} />
+        <EnTete t={t.tete} sommaire={t.sommaire} ouvrirLibelle={t.panier.ouvrir} />
         <Rail libelle={t.rail} />
+        <Panier t={t.panier} formats={t.allocation.formats} langue={lang} />
         <Scene modele={MODELE} alt={t.repli} />
 
         <main>
           <Ouverture t={t.ouverture} langue={lang} tv={t.video} />
-          <Cuvee t={t.cuvee} />
+          <Cuvee t={t.cuvee} bouteille={t.allocation.formats.find((f) => f.id === "bouteille") ?? t.allocation.formats[0]} libelleMax={t.allocation.maximum} />
           <Sol t={t.sol} />
           <Geste t={t.geste} video={VIDEO_CLAIRE} tv={t.video} />
           <DansLeVerre t={t.verre} />

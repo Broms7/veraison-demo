@@ -7,7 +7,7 @@ import type { Dictionnaire } from "@/dictionnaires";
 
 const POSE: PoseChapitre = { x: 0, y: 0, r: 0, s: 1, label: 2 };
 
-export function Cuvee({ t }: { t: Dictionnaire["cuvee"] }) {
+export function Cuvee({ t, bouteille, libelleMax }: { t: Dictionnaire["cuvee"]; bouteille: { id: string; max: number }; libelleMax: string }) {
   return (
     <Chapitre id="cuvee" folio="II" pose={POSE} registre className="fiche">
       <div className="grille3">
@@ -15,7 +15,7 @@ export function Cuvee({ t }: { t: Dictionnaire["cuvee"] }) {
           <Surtitre folio="II">{t.surtitre}</Surtitre>
           <h2 className="titre">{t.titre[0]}<br /><span className="vin">{t.titre[1]}</span></h2>
           <p className="chapeau" data-apparition="">{t.texte}</p>
-          <div data-apparition=""><BoutonAjout libelle={t.ajouter} className="btn btn-secondaire" /></div>
+          <div data-apparition=""><BoutonAjout format={bouteille.id} max={bouteille.max} libelle={t.ajouter} libelleMax={libelleMax} className="btn btn-secondaire" /></div>
         </div>
         {/* Filet de liaison (addendum §7) : ce qu'on lit sur la bouteille = ce que dit la fiche.
             Il passe DERRIÈRE la bouteille (couche contenu), dans la colonne centrale. */}

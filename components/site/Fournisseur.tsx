@@ -20,8 +20,8 @@ const pasDAbonnement = () => () => {};
 
 interface ContexteSite {
   langue: Langue;
-  panier: number;
-  ajouter: () => void;
+  panierOuvert: boolean;                 // récapitulatif d'allocation ouvert (Sheet / Drawer)
+  ouvrirPanier: (ouvert: boolean) => void;
   entree: boolean;     // la porte d'âge a été franchie
   entrer: () => void;
 }
@@ -35,7 +35,7 @@ export function useSite(): ContexteSite {
 }
 
 export function Fournisseur({ langue, children }: { langue: Langue; children: ReactNode }) {
-  const [panier, setPanier] = useState(0);
+  const [panierOuvert, ouvrirPanier] = useState(false);
   // Porte franchie = choix mémorisé (lu côté client seulement) OU clic sur « Oui » pendant la visite.
   const memorise = useSyncExternalStore(pasDAbonnement, ageMemorise, () => false);
   const [clic, setClic] = useState(false);
@@ -55,8 +55,6 @@ export function Fournisseur({ langue, children }: { langue: Langue; children: Re
     setClic(true);
     try { localStorage.setItem(CLE_AGE, String(Date.now())); } catch { /* sans stockage, on redemandera */ }
   }, []);
-  const ajouter = useCallback(() => setPanier((n) => n + 1), []);
-
-  const valeur = useMemo(() => ({ langue, panier, ajouter, entree, entrer }), [langue, panier, ajouter, entree, entrer]);
+  const valeur = useMemo(() => ({ langue, panierOuvert, ouvrirPanier, entree, entrer }), [langue, panierOuvert, entree, entrer]);
   return <Contexte.Provider value={valeur}>{children}</Contexte.Provider>;
 }
