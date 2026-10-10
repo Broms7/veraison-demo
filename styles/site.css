@@ -779,6 +779,13 @@ html[lang="en"] .critique blockquote p::after { content: "\201D"; }
   .faq-contenu[data-state] { animation: none; }
 }
 
+/* ---------- page 404 (app/global-not-found.tsx) ---------- */
+.introuvable { min-height: 100vh; display: grid; place-items: center; padding: var(--pad); border: var(--cadre) solid var(--bordeaux); }
+.introuvable main { display: grid; gap: var(--e-4); max-width: 40ch; }
+.introuvable .mono { color: var(--oxyde); }
+.introuvable h1 { font-size: var(--t-h2); }
+.introuvable nav { display: flex; flex-wrap: wrap; gap: var(--e-3); margin-top: var(--e-4); }
+
 /* ---------- tablette 760–1099 px (§2.1) : grille resserrée, rien de spécifique au-delà des tokens ---------- */
 
 /* ---------- mobile < 760 px : la bouteille passe derrière les feuilles de texte ---------- */

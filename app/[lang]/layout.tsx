@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import "../globals.css";
 import { classesPolices } from "@/lib/polices";
 import { estLangue, getDictionnaire, langues } from "@/dictionnaires";
+import { URL_SITE } from "@/lib/site";
 
 export function generateStaticParams() {
   return langues.map((lang) => ({ lang }));
@@ -14,10 +15,26 @@ export async function generateMetadata({ params }: LayoutProps<"/[lang]">): Prom
   const { lang } = await params;
   if (!estLangue(lang)) return {};
   const t = getDictionnaire(lang);
+  // Recette n° 9 : URL absolues (metadataBase), canonical, hreflang absolus, Open Graph et carte Twitter.
+  // L'image de partage vient de ./opengraph-image.tsx (ajoutée automatiquement par Next).
   return {
+    metadataBase: new URL(URL_SITE),
     title: t.meta.titre,
     description: t.meta.description,
-    alternates: { languages: Object.fromEntries(langues.map((l) => [l, `/${l}`])) },
+    alternates: {
+      canonical: `/${lang}`,
+      languages: { ...Object.fromEntries(langues.map((l) => [l, `/${l}`])), "x-default": "/fr" },
+    },
+    openGraph: {
+      type: "website",
+      url: `/${lang}`,
+      siteName: "Clos Ferrugine",
+      title: t.meta.titre,
+      description: t.meta.description,
+      locale: lang === "fr" ? "fr_FR" : "en_GB",
+      alternateLocale: lang === "fr" ? ["en_GB"] : ["fr_FR"],
+    },
+    twitter: { card: "summary_large_image", title: t.meta.titre, description: t.meta.description },
   };
 }
 
