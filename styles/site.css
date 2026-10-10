@@ -260,9 +260,9 @@ body[data-fond="sombre"] .rail span { color: var(--voile); }
 .domaine .cpt .mono { color: var(--voile); }
 .planche { background: var(--voile-texte-video); border: var(--trait) solid var(--filet-nuit); padding: 24px; }
 .planche .ital { color: var(--voile); margin-bottom: var(--e-3); font-size: 18px; }
-.planche .dessin { width: 100%; height: auto; aspect-ratio: 1; color: var(--oxyde-clair); }
-.planche .dessin text { fill: var(--voile); }
-.planche .dessin text.nom { fill: var(--papier); }
+.planche .dessin { color: var(--oxyde-clair); }
+.planche .libelle { color: var(--voile); }
+.planche .libelle.nom { color: var(--papier); }
 .parcelles { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 20px; margin-top: 16px; font-size: var(--t-petit); line-height: var(--lh-petit); color: var(--voile); }
 .parcelles b { display: block; font: 800 20px/1 var(--f-titre); font-variation-settings: var(--opsz-titre); text-transform: uppercase; color: var(--papier); margin-bottom: 4px; }
 .parcelles .mono { display: block; color: var(--voile); margin-bottom: 4px; }
@@ -453,6 +453,26 @@ html:not([data-js]) .ch[data-registre]::before { transform: none; }
 .dessin text { font: 500 11px var(--f-mono); letter-spacing: 0.06em; fill: var(--gris); transition: opacity 200ms linear; }
 .dessin text.txt-ox { fill: var(--oxyde); }
 .objet-trait { width: 180px; height: 180px; display: block; }
+/* Grands dessins : libellés HTML en taille écran posés en % du viewBox (recette n° 1 et 5) */
+.dessin-cadre { position: relative; width: 100%; }
+.dessin-cadre > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.libelle {
+  position: absolute; font: 500 11px/1.25 var(--f-mono); letter-spacing: 0.06em; color: var(--gris);
+  white-space: nowrap; transform: translate(0, -80%); transition: opacity 200ms linear; pointer-events: none;
+}
+.libelle.a-middle { transform: translate(-50%, -80%); text-align: center; }
+.libelle.a-end { transform: translate(-100%, -80%); text-align: right; }
+.libelle.ox { color: var(--oxyde); }
+.libelle .court { display: none; }
+@media (max-width: 1099.98px) {
+  .acces .libelle .long { display: none; }
+  .acces .libelle .court { display: inline; }
+  .roue .libelle { white-space: normal; width: max-content; max-width: 9ch; letter-spacing: 0.02em; }
+  .roue .libelle.famille { max-width: none; }
+  /* Allocation (760–1099) : cinq formats tiennent dans la largeur */
+  .formats { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .format .objet svg { max-width: 100%; }
+}
 .hachure { position: absolute; inset: 0; display: grid; place-items: center; color: var(--gris);
   background: repeating-linear-gradient(135deg, var(--papier-2) 0 10px, var(--hachure) 10px 11px); }
 
@@ -525,7 +545,7 @@ html:not([data-js]) .ch[data-registre]::before { transform: none; }
 .roue { width: min(600px, 44vw); height: auto; display: block; margin: 0 auto; }
 .roue .anneau { stroke: var(--filet); }
 .roue .rayon { stroke-width: 2px; }
-.roue text.famille { font: italic 400 16px var(--f-ital); letter-spacing: 0; fill: var(--encre); }
+.roue .libelle.famille { font: italic 400 16px/1.1 var(--f-ital); letter-spacing: 0; color: var(--encre); }
 /* Le texte passe DEVANT la bouteille qui glisse vers VI (même principe que les notes de V) */
 .roue-texte { background: var(--papier-carte); padding: 28px 28px 24px; border: var(--trait) solid var(--filet); }
 .roue-texte h3 { font-size: var(--t-h3); line-height: var(--lh-h3); margin: 6px 0 14px; }
@@ -637,8 +657,7 @@ html[lang="en"] .critique blockquote p::after { content: "\201D"; }
 .venir .grille-v { display: grid; grid-template-columns: 1.25fr 1fr; gap: 5vw; max-width: var(--largeur-max); margin: 0 auto; }
 .venir h2 { font-size: var(--t-h2-col); margin: 6px 0 18px; }
 .venir .chapeau { max-width: 44ch; }
-.acces-cadre { aspect-ratio: 4 / 3; border: var(--trait) solid var(--encre); margin: 4vh 0 24px; padding: 4%; }
-.acces { width: 100%; height: 100%; display: block; }
+.acces-cadre { border: var(--trait) solid var(--encre); margin: 4vh 0 24px; padding: 4% 4% 3%; }
 .bloc-titre { display: block; color: var(--gris); margin-bottom: 10px; }
 .distances, .horaires { list-style: none; margin: 0 0 28px; padding: 0; display: grid; gap: 12px; }
 .distances { gap: 6px; font-size: var(--t-petit); color: var(--gris); }
@@ -665,6 +684,15 @@ html[lang="en"] .critique blockquote p::after { content: "\201D"; }
 
 /* ---------- phase 3 : tablette et mobile ---------- */
 @media (max-width: 1099.98px) {
+  /* Roue (recette n° 4) : une colonne (roue, puis carte de texte), la 3e colonne disparaît, rien ne déborde */
+  .roue-grille { grid-template-columns: minmax(0, 1fr); justify-items: center; }
+  .roue-grille > div:last-child:empty { display: none; }
+  .roue-fig { width: min(560px, 100%); }
+  .roue { width: 100%; }
+  .roue-texte { min-width: 0; max-width: 560px; width: 100%; }
+  .jauge { grid-template-columns: 84px auto minmax(0, 1fr); }
+  .jauge em { white-space: normal; }
+  .roue .libelle { font-size: 10px; }
   .sol .texte { width: calc((100% - 2 * var(--pad)) * 0.36); }
   .presse-col { max-width: 66vw; }
 }
@@ -686,9 +714,14 @@ html[lang="en"] .critique blockquote p::after { content: "\201D"; }
   .racines-leg { position: static; order: 3; }
 
   .roue-grille, .dom-grille, .venir .grille-v { grid-template-columns: 1fr; }
-  .roue-fig { padding: 12px; background: var(--papier-carte); }
+  .roue-grille { grid-template-columns: minmax(0, 1fr); }
+  .roue-fig { padding: 12px 4px; background: var(--papier-carte); min-width: 0; }
   .roue { width: 100%; }
-  .jauge { grid-template-columns: 90px auto 1fr; gap: 10px; }
+  /* Libellés de la roue : ils passent sur deux lignes au lieu de sortir de l'écran */
+  .roue .libelle { white-space: normal; width: max-content; max-width: 9ch; font-size: 10px; letter-spacing: 0.02em; }
+  .roue .libelle.famille { font-size: 14px; max-width: none; }
+  .jauge { grid-template-columns: 76px auto minmax(0, 1fr); }
+  .jauge { gap: 10px; }
 
   .domaine .iris { padding: var(--ch-haut) var(--pad) var(--ch-bas); }
   .voile-texte { display: none; }

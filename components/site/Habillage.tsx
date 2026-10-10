@@ -22,7 +22,7 @@ const FORMES = "path,line,polyline,polygon,circle,rect,ellipse";
 
 /* ---------------- tracés ---------------- */
 
-interface Groupe { traits: SVGGeometryElement[]; pointilles: SVGElement[]; textes: SVGTextElement[] }
+interface Groupe { traits: SVGGeometryElement[]; pointilles: SVGElement[]; textes: (SVGElement | HTMLElement)[] }
 
 /** Prépare un dessin : chaque trait reçoit pathLength=1 (tirage de 1 → 0 sans getTotalLength).
  *  Les pointillés gardent leur motif : ils apparaissent en fondu au lieu d'être tirés. */
@@ -35,7 +35,9 @@ function preparer(svg: SVGSVGElement): Groupe[] {
       traits.forEach((f) => { f.setAttribute("pathLength", "1"); f.style.strokeDasharray = "1"; f.style.strokeDashoffset = "1"; });
       const pointilles = formes.filter((f) => f.classList.contains("pt"));
       pointilles.forEach((f) => { f.style.opacity = "0"; });
-      const textes = [...g.querySelectorAll<SVGTextElement>("text")];
+      // Textes du groupe : <text> SVG des petits objets + libellés HTML en surimpression des grands dessins
+      const libelles = svg.parentElement?.querySelectorAll<HTMLElement>(`[data-libelle="${g.dataset.o}"]`) ?? [];
+      const textes: (SVGElement | HTMLElement)[] = [...g.querySelectorAll<SVGTextElement>("text"), ...libelles];
       textes.forEach((t) => { t.style.opacity = "0"; });
       return { traits, pointilles, textes };
     });

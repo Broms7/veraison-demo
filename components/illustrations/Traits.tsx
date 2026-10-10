@@ -299,12 +299,56 @@ const T13 = () => (
 export const OBJETS_MOIS = [T2, T3, T4, T5, T6, T7, T8, T9, () => <Cagette />, T11, T12, T13];
 
 /* ------------------------------------------------------------------ */
+/* Libellés des grands dessins : HTML en surimpression (recette n° 1 et 5)
+   Un <text> SVG est en unités du viewBox : il grossit avec le dessin (24 px à 2 000 px) et devient
+   illisible sur mobile (6 à 8 px). Les libellés sont donc des <span> placés en % du viewBox, en taille
+   écran fixe (mono 11 px). Le dessin garde son rapport (aspect-ratio = viewBox), le % reste exact.
+   data-libelle="k" : le libellé apparaît avec le groupe de tracé k (Habillage.tsx).            */
+/* ------------------------------------------------------------------ */
+
+type Ancre = "start" | "middle" | "end";
+interface Libelle { x: number; y: number; texte: string; o: number; ancre?: Ancre; classe?: string }
+
+function Cadre({ vb, libelles, className, children, svg }: {
+  vb: [number, number, number, number]; libelles: Libelle[]; className: string; children: ReactNode;
+  svg: { trace: "scrub" | "once"; alt?: string };
+}) {
+  const [x0, y0, l, h] = vb;
+  return (
+    <div className={`dessin-cadre ${className}`} style={{ aspectRatio: `${l} / ${h}` }}>
+      <svg className="dessin" viewBox={vb.join(" ")} data-trace={svg.trace}
+        role={svg.alt ? "img" : undefined} aria-label={svg.alt} aria-hidden={svg.alt ? undefined : true}>
+        {children}
+      </svg>
+      {libelles.map((lb) => (
+        <span key={`${lb.texte}-${lb.x}`} aria-hidden="true" data-libelle={lb.o}
+          className={`libelle a-${lb.ancre ?? "start"}${lb.classe ? ` ${lb.classe}` : ""}`}
+          style={{ left: `${((lb.x - x0) / l) * 100}%`, top: `${((lb.y - y0) / h) * 100}%` }}>
+          {/* Version courte (avant « · » ou « , ») pour les petits écrans : la distance reste dans la liste HTML */}
+          <span className="long">{lb.texte}</span>
+          <span className="court">{lb.texte.split(/ · |, /)[0]}</span>
+        </span>
+      ))}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /* T14 · Carte des parcelles (ch. VII), scrubbée, oxyde clair sur nuit */
 /* ------------------------------------------------------------------ */
 
 export function CarteParcelles({ t }: { t: { alt: string; clocher: string; route: string; libourne: string } }) {
+  const libelles: Libelle[] = [
+    { x: 212, y: 25, texte: t.clocher, o: 2 },
+    { x: 200, y: 386, texte: t.route, o: 2, ancre: "middle" },
+    { x: 12, y: 182, texte: t.libourne, o: 2 },
+    { x: 212, y: 150, texte: "La Rouille", o: 3, ancre: "middle", classe: "nom" },
+    { x: 324, y: 150, texte: "Le Puits", o: 3, ancre: "middle", classe: "nom" },
+    { x: 95, y: 262, texte: "Les Sables", o: 3, ancre: "middle", classe: "nom" },
+    { x: 238, y: 286, texte: "La Route", o: 3, ancre: "middle", classe: "nom" },
+  ];
   return (
-    <svg className="dessin carte-parcelles" viewBox="0 0 400 400" data-trace="scrub" role="img" aria-label={t.alt}>
+    <Cadre vb={[0, 0, 400, 400]} libelles={libelles} className="carte-parcelles" svg={{ trace: "scrub", alt: t.alt }}>
       <g data-o="0"><polygon className="t" points="60,70 340,60 350,330 70,340" /></g>
       <g data-o="1">
         <polyline className="t" points="120,68 126,338" />
@@ -313,64 +357,66 @@ export function CarteParcelles({ t }: { t: { alt: string; clocher: string; route
         {/* Rangs : hachures orientées comme les vrais rangs (nord-sud au centre, est-ouest au sud) */}
         {[140, 156, 172, 188, 204, 220, 236, 252, 268, 284].map((x) => <line key={x} className="t rang" x1={x} y1={88 - (x - 140) * 0.02} x2={x + 1} y2="222" />)}
         {[318, 330].map((x) => <line key={x} className="t rang" x1={x} y1="80" x2={x} y2="220" />)}
-        {[96, 116, 136, 156, 176, 196, 216].map((y) => <line key={y} className="t rang" x1="80" y1={y + 0} x2="110" y2={y} />)}
-        {[256, 276, 296, 316].map((y) => <line key={y} className="t rang" x1="146" y1={y} x2="334" y2={y - 4} />)}
+        {[96, 116, 136, 156, 176, 196, 216].map((y) => <line key={y} className="t rang" x1="80" y1={y} x2="110" y2={y} />)}
+        {[256, 296, 316].map((y) => <line key={y} className="t rang" x1="146" y1={y} x2="334" y2={y - 4} />)}
       </g>
       <g data-o="2">
         {/* Repères : clocher (nord), route (sud), flèche vers Libourne (ouest) */}
         <path className="t" d="M200 14 L200 36 M192 22 L208 22" />
-        <path className="t" d="M20 378 L380 362" />
+        <path className="t" d="M20 368 L380 352" />
         <path className="t" d="M52 200 L14 200 M14 200 L24 192 M14 200 L24 208" />
-        <text x="212" y="30">{t.clocher}</text>
-        <text x="200" y="394" textAnchor="middle">{t.route}</text>
-        <text x="10" y="186">{t.libourne}</text>
       </g>
-      <g data-o="3">
-        <text className="nom" x="212" y="150" textAnchor="middle">La Rouille</text>
-        <text className="nom" x="324" y="150" textAnchor="middle">Le Puits</text>
-        <text className="nom" x="95" y="250" textAnchor="middle">Les Sables</text>
-        <text className="nom" x="238" y="290" textAnchor="middle">La Route</text>
-      </g>
-    </svg>
+      <g data-o="3" />
+    </Cadre>
   );
 }
 
 /* ------------------------------------------------------------------ */
 /* T15 · Carte d'accès (ch. XIV), scrubbée, le Clos tracé en dernier   */
+/* Retracée (recette n° 1) : Libourne au confluent de l'Isle et de la  */
+/* Dordogne, la gare au sud, la N89 vers Bordeaux à l'ouest, la route  */
+/* du plateau jusqu'au Clos, Saint-Émilion à l'est. Aucun libellé sur  */
+/* un trait, rien hors du cadre.                                       */
 /* ------------------------------------------------------------------ */
 
 interface LibellesAcces { clos: string; clocher: string; libourne: string; gare: string; stEmilion: string; bordeaux: string; isle: string; dordogne: string }
 
 export function CarteAcces({ t, alt }: { t: LibellesAcces; alt: string }) {
+  const libelles: Libelle[] = [
+    { x: 100, y: 24, texte: t.isle, o: 0 },
+    { x: 392, y: 290, texte: t.dordogne, o: 0, ancre: "end" },
+    { x: 8, y: 186, texte: t.bordeaux, o: 1 },
+    { x: 164, y: 224, texte: t.libourne, o: 2 },
+    { x: 120, y: 242, texte: t.gare, o: 2, ancre: "end" },
+    { x: 392, y: 156, texte: t.stEmilion, o: 2, ancre: "end" },
+    { x: 254, y: 58, texte: t.clocher, o: 2, ancre: "end" },
+    { x: 268, y: 112, texte: t.clos, o: 3, classe: "ox" },
+  ];
   return (
-    <svg className="dessin acces" viewBox="0 0 400 300" data-trace="scrub" role="img" aria-label={alt}>
+    <Cadre vb={[0, 0, 400, 300]} libelles={libelles} className="acces" svg={{ trace: "scrub", alt }}>
       <g data-o="0">
-        <path className="t pt" d="M0 120 C80 130 140 100 200 140 S320 200 400 190" />
-        <path className="t pt" d="M0 262 C100 252 200 282 400 242" />
-        <text x="8" y="112">{t.isle}</text>
-        <text x="8" y="250">{t.dordogne}</text>
+        {/* L'Isle descend du nord-ouest et rejoint la Dordogne à Libourne */}
+        <path className="t pt" d="M44 0 C70 50 104 104 126 160 C136 186 146 214 156 246" />
+        <path className="t pt" d="M0 262 C90 250 160 252 230 258 S340 250 400 238" />
       </g>
       <g data-o="1">
-        <path className="t" d="M30 292 L150 160" />
-        <path className="t" d="M150 160 L252 108" />
-        <path className="t" d="M150 160 L320 170" />
-        <text x="36" y="282">{t.bordeaux}</text>
+        {/* N89 vers Bordeaux, à l'ouest */}
+        <path className="t" d="M150 200 L104 196 L56 200 L0 206" />
+        {/* Route du plateau : Libourne → Clos */}
+        <path className="t" d="M150 200 C186 182 214 150 248 112" />
+        {/* Route de Saint-Émilion, à l'est */}
+        <path className="t" d="M150 200 C214 206 280 192 340 176" />
+        {/* Gare : embranchement au sud de la ville */}
+        <path className="t" d="M150 200 L132 232" />
       </g>
       <g data-o="2">
-        <circle className="t" cx="150" cy="160" r="5" />
-        <rect className="t" x="132" y="176" width="8" height="8" />
-        <circle className="t" cx="320" cy="170" r="4" />
-        <path className="t" d="M250 64 L250 82 M244 70 L256 70" />
-        <text x="142" y="150" textAnchor="end">{t.libourne}</text>
-        <text x="146" y="198">{t.gare}</text>
-        <text x="326" y="160">{t.stEmilion}</text>
-        <text x="262" y="68">{t.clocher}</text>
+        <circle className="t" cx="150" cy="200" r="6" />
+        <rect className="t" x="126" y="230" width="9" height="9" />
+        <circle className="t" cx="340" cy="176" r="4" />
+        <path className="t" d="M264 48 L264 68 M257 55 L271 55" />
       </g>
-      <g data-o="3">
-        <rect className="t ox" x="246" y="100" width="12" height="12" />
-        <text className="txt-ox" x="266" y="112">{t.clos}</text>
-      </g>
-    </svg>
+      <g data-o="3"><rect className="t ox" x="250" y="100" width="12" height="12" /></g>
+    </Cadre>
   );
 }
 
@@ -388,20 +434,31 @@ export function RoueAromes({ aromes, familles, alt }: { aromes: Arome[]; famille
     const a = (angle * Math.PI) / 180;
     return { x: 200 + r * Math.cos(a), y: 200 + r * Math.sin(a), c: Math.cos(a) };
   };
+  const ancreDe = (c: number): Ancre => (c > 0.15 ? "start" : c < -0.15 ? "end" : "middle");
   // Ordre de tracé = ordre d'arrivée (ouverture → 20 min → 1 h → en bouche → finale), puis ordre de la liste.
   const ordre = aromes.map((_, i) => i).sort((a, b) => aromes[a].ordre - aromes[b].ordre || a - b);
+  const rang = new Map(ordre.map((i, k) => [i, k + 1]));
   // Filets radiaux pointillés entre familles + nom de famille au milieu de son secteur.
   const bornes: { angle: number; famille: Famille; milieu: number }[] = [];
   let debut = 0;
   aromes.forEach((a, i) => {
-    const suivante = aromes[i + 1]?.famille;
-    if (suivante !== a.famille) {
+    if (aromes[i + 1]?.famille !== a.famille) {
       bornes.push({ angle: -90 + (i + 0.5) * pas, famille: a.famille as Famille, milieu: -90 + ((debut + i) / 2) * pas });
       debut = i + 1;
     }
   });
+  const libelles: Libelle[] = [
+    ...aromes.map((a, i) => {
+      const l = pt(-90 + i * pas, 192);
+      return { x: l.x, y: l.y, texte: a.nom, o: rang.get(i) ?? 1, ancre: ancreDe(l.c) };
+    }),
+    ...bornes.map((b) => {
+      const m = pt(b.milieu, 258);
+      return { x: m.x, y: m.y, texte: familles[b.famille], o: aromes.length + 1, ancre: ancreDe(m.c), classe: "famille" };
+    }),
+  ];
   return (
-    <svg className="dessin roue" viewBox="-100 -34 600 468" data-trace="once" role="img" aria-label={alt}>
+    <Cadre vb={[-100, -34, 600, 468]} libelles={libelles} className="roue" svg={{ trace: "once", alt }}>
       <g data-o="0">
         {[1, 2, 3].map((k) => <circle key={k} className="t pt anneau" cx="200" cy="200" r={40 + 45 * k} />)}
         {bornes.map((b) => {
@@ -412,24 +469,17 @@ export function RoueAromes({ aromes, familles, alt }: { aromes: Arome[]; famille
       {ordre.map((i, k) => {
         const a = aromes[i];
         const angle = -90 + i * pas;
-        const d = pt(angle, 40), f = pt(angle, 40 + 45 * a.intensite), l = pt(angle, 192);
-        const ancre = l.c > 0.15 ? "start" : l.c < -0.15 ? "end" : "middle";
+        const d = pt(angle, 40), f = pt(angle, 40 + 45 * a.intensite);
         const couleur = COULEUR[a.famille as Famille];
         return (
           <g key={a.nom} data-o={k + 1}>
             <line className="t rayon" style={{ stroke: couleur }} x1={d.x} y1={d.y} x2={f.x} y2={f.y} />
             <rect className="t" style={{ stroke: couleur, fill: couleur }} x={f.x - 3} y={f.y - 3} width="6" height="6" />
-            <text x={l.x} y={l.y + 4} textAnchor={ancre}>{a.nom}</text>
           </g>
         );
       })}
-      <g data-o={aromes.length + 1}>
-        {bornes.map((b) => {
-          const m = pt(b.milieu, 236);
-          return <text key={b.famille} className="famille" x={m.x} y={m.y + 5} textAnchor={m.c > 0.15 ? "start" : m.c < -0.15 ? "end" : "middle"}>{familles[b.famille]}</text>;
-        })}
-      </g>
-    </svg>
+      <g data-o={aromes.length + 1} />
+    </Cadre>
   );
 }
 
