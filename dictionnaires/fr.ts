@@ -74,7 +74,7 @@ export const fr = {
     lignes: [
       {
         libelle: "Degré · alcool en volume",
-        chiffre: "14%",
+        chiffre: "14 %",
         texte: "Le degré de la vendange, sans chaptalisation.",
         tiroir:
           "Le merlot du plateau atteint quatorze degrés quand Claire attend sa pleine maturité sans la dépasser. Elle ne chaptalise pas et ne désalcoolise pas : le degré est celui de la vendange.",
@@ -434,7 +434,7 @@ export const fr = {
     lettreTexte: "Une lettre par an, envoyée le jour où le millésime sort.",
     email: "Votre e-mail",
     inscrire: "S'inscrire",
-    inscrit: "Inscrit. Prochaine lettre : le jour de la sortie du millésime.",
+    inscrit: "Inscrit. Prochaine lettre : le jour de la sortie du millésime. Démonstration : rien n'est envoyé.",
     erreur: "Adresse incomplète",
     colonnes: [
       { titre: "Venir", liens: ["Dégustations", "La longue table", "Accès"] },

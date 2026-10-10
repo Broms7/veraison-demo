@@ -111,7 +111,8 @@ export default function SceneCanvas({ modele, mobile, onPret, onPerdu }: Props) 
       style={{ pointerEvents: "none" }}
       frameloop="never"
       dpr={mobile ? [1, 1.5] : [1, 1.75]}
-      shadows={mobile ? false : "soft"}
+      // « percentage » = PCFShadowMap : PCFSoftShadowMap est retiré de three r18x (avertissement console)
+      shadows={mobile ? false : "percentage"}
       camera={{ fov: CAMERA.fov, position: [0, 0, CAMERA.z], near: CAMERA.near, far: CAMERA.far }}
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
       onCreated={({ gl }) => {

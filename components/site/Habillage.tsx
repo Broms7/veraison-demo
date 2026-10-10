@@ -119,7 +119,7 @@ export default function Habillage() {
             p: 1, ease: "none",
             // Fin avancée (addendum : « center 45% ») pour que le dessin soit complet à l'ancre du chapitre,
             // là où le lecteur s'arrête ; il reste réversible.
-            scrollTrigger: { trigger: svg, start: "top 85%", end: "center 62%", scrub: 0.6 },
+            scrollTrigger: { trigger: svg, start: "top 85%", end: coupe ? "bottom bottom" : "center 62%", scrub: 0.6 },
             onUpdate: () => {
               groupes.forEach((g, k) => dessinerGroupe(g, gsap.utils.clamp(0, 1, proxy.p * N - k)));
               if (!coupe) return;

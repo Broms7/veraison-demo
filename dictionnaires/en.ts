@@ -434,7 +434,7 @@ export const en: Dictionnaire = {
     lettreTexte: "One letter a year, sent the day the vintage is released.",
     email: "Your email",
     inscrire: "Subscribe",
-    inscrit: "Subscribed. Next letter: the day the vintage is released.",
+    inscrit: "Subscribed. Next letter: the day the vintage is released. Demonstration: nothing is sent.",
     erreur: "Incomplete address",
     colonnes: [
       { titre: "Visit", liens: ["Tastings", "The long table", "Getting here"] },
