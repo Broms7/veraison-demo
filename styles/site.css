@@ -167,6 +167,7 @@ body[data-fond="sombre"] .rail span { color: var(--voile); }
 /* Clé `o` de la pose : fondu temporel, sortie plus rapide que l'entrée (addendum §1) */
 .scene[data-efface] { opacity: 0; transition-duration: 240ms; }
 .scene[data-creux] { opacity: 0; transition: opacity 100ms linear; }
+.scene-canvas, .scene-canvas * { pointer-events: none !important; }   /* B1 : ceinture et bretelles */
 .scene-canvas { position: absolute !important; inset: 0; opacity: 0; transition: opacity 600ms var(--ease-sortie); }
 .scene[data-prete] .scene-canvas { opacity: 1; }
 .repli {

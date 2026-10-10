@@ -106,6 +106,9 @@ export default function SceneCanvas({ modele, mobile, onPret, onPerdu }: Props) 
   return (
     <Canvas
       className="scene-canvas"
+      // B1 (recette) : R3F pose `pointer-events: auto` en ligne sur son wrapper ; la bouteille ne reçoit
+      // aucun événement, le canvas plein écran ne doit jamais capter les clics du contenu dessous.
+      style={{ pointerEvents: "none" }}
       frameloop="never"
       dpr={mobile ? [1, 1.5] : [1, 1.75]}
       shadows={mobile ? false : "soft"}
