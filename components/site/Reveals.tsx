@@ -11,6 +11,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import { CustomEase } from "gsap/CustomEase";
 import { useGSAP } from "@gsap/react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 
 // Mouvement de la phase 3 (tracés, compteurs, transitions, VIII épinglé) : chunk séparé, chargé après
@@ -24,7 +25,29 @@ const EASE = CustomEase.create("sortie", "0.2,0.7,0.2,1");
 const DEPART = "top 85%";
 
 export function Reveals() {
-  useGSAP(() => {
+  // Performance (recette n° 8) : l'installation (≈ 20 découpes SplitText, des dizaines de ScrollTriggers)
+  // attend un moment de calme du fil principal ; elle ne retarde plus le premier rendu ni le LCP.
+  // Le mouvement de la phase 3 (Habillage) n'est chargé qu'ensuite.
+  const [installe, setInstalle] = useState(false);
+  useEffect(() => {
+    let ctx: gsap.Context | null = null;
+    const installer = () => {
+      ctx = gsap.context(() => installerApparitions());
+      setInstalle(true);
+    };
+    if (typeof window.requestIdleCallback === "function") {
+      const id = window.requestIdleCallback(installer, { timeout: 1200 });
+      return () => { window.cancelIdleCallback(id); ctx?.revert(); };
+    }
+    const id = window.setTimeout(installer, 200);
+    return () => { window.clearTimeout(id); ctx?.revert(); };
+  }, []);
+  return installe ? <Habillage /> : null;
+}
+
+/** Titres, blocs et relevés : déclarés une fois, dans un gsap.context (nettoyé au démontage). */
+function installerApparitions() {
+  {
     const reduit = matchMedia("(prefers-reduced-motion: reduce)").matches;
     const titres = gsap.utils.toArray<HTMLElement>("main h2.titre, main h3.titre, .pied h3.titre");
 
@@ -77,6 +100,5 @@ export function Reveals() {
         });
       });
     }
-  });
-  return <Habillage />;
+  }
 }

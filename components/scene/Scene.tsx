@@ -9,14 +9,28 @@
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { abonner, etat } from "@/lib/moteur";
-import { useMobile, useMonte } from "@/lib/media";
+import { useMobile } from "@/lib/media";
+import { useSite } from "@/components/site/Fournisseur";
 
 const SceneCanvas = dynamic(() => import("./SceneCanvas"), { ssr: false });
 
 export function Scene({ modele, alt }: { modele: string | null; alt: string }) {
   const [prete, setPrete] = useState(false);
-  const monte = useMonte();
   const mobile = useMobile();
+  const { entree } = useSite();
+  // Performance (recette n° 8) : three/R3F (≈ 260 Ko) n'est demandé qu'une fois la porte d'âge franchie,
+  // puis au premier moment de calme du fil principal. Jusque-là, l'image de repli suit déjà la pose.
+  const [charger, setCharger] = useState(false);
+  useEffect(() => {
+    if (!entree || charger) return;
+    const lancer = () => setCharger(true);
+    if (typeof window.requestIdleCallback === "function") {
+      const id = window.requestIdleCallback(lancer, { timeout: 1500 });
+      return () => window.cancelIdleCallback(id);
+    }
+    const id = window.setTimeout(lancer, 300);
+    return () => window.clearTimeout(id);
+  }, [entree, charger]);
   const repli = useRef<HTMLDivElement>(null);
   const scene = useRef<HTMLDivElement>(null);
   const onPret = useCallback(() => setPrete(true), []);
@@ -54,7 +68,7 @@ export function Scene({ modele, alt }: { modele: string | null; alt: string }) {
         {/* eslint-disable-next-line @next/next/no-img-element -- image de repli statique, déjà dimensionnée */}
         <img src="/bouteille-repli.svg" alt={alt} width={229} height={1000} />
       </div>
-      {monte && <SceneCanvas modele={modele} mobile={mobile} onPret={onPret} onPerdu={onPerdu} />}
+      {charger && <SceneCanvas modele={modele} mobile={mobile} onPret={onPret} onPerdu={onPerdu} />}
     </div>
   );
 }

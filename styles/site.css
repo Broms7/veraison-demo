@@ -190,6 +190,9 @@ body[data-fond="sombre"] .rail span { color: var(--voile); }
 .carte-papier { background: var(--papier-carte); border: var(--trait) solid var(--filet); padding: var(--e-5); }
 .media { position: relative; overflow: hidden; background: var(--papier-2); }
 .media img, .media video { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* La vidéo recouvre l'image fixe et n'apparaît qu'à sa première image lue */
+.media video { position: absolute; inset: 0; opacity: 0; transition: opacity 400ms var(--ease-sortie); }
+.media video[data-lue] { opacity: 1; }
 .media-pause {
   position: absolute; right: var(--e-3); bottom: var(--e-3); z-index: 2; width: 44px; height: 44px; display: grid; place-items: center;
   background: rgb(20 12 14 / 0.6); color: var(--papier); border: 0; border-radius: var(--r-0); cursor: pointer;

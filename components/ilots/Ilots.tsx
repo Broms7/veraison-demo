@@ -11,7 +11,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import { useSite } from "@/components/site/Fournisseur";
 import { abonner, etat } from "@/lib/moteur";
 import { allerA, usePauseScroll } from "@/lib/scroll";
-import { useMonte, useMouvementReduit } from "@/lib/media";
+import { useMouvementReduit } from "@/lib/media";
 
 gsap.registerPlugin(useGSAP, SplitText, CustomEase);
 const EASE_SORTIE = CustomEase.create("sortie", "0.2,0.7,0.2,1");   // = --ease-sortie
@@ -91,33 +91,47 @@ export function FicheMillesime({ a, photo, t, declencheur, classeDeclencheur, al
 }
 
 /**
- * Boucle vidéo muette (chapitres III et VI) : lecture quand 30 % visible, pause hors champ,
- * bouton pause 44 px (WCAG 2.2.2). Image fixe seule si mouvement réduit ou si la vidéo manque.
- * `decorative` : la vidéo est aria-hidden et le poster sans alt (fond du chapitre VI).
+ * Boucle vidéo muette (chapitres IV et VII), bouton pause 44 px (WCAG 2.2.2).
+ * Performance (recette n° 8) : l'image fixe (next/image, chargement différé) est toujours dessous ;
+ * la <video> n'est montée qu'une fois la porte d'âge franchie ET le bloc à moins d'un écran de la fenêtre :
+ * rien n'est téléchargé avant. Elle apparaît en fondu à sa première image lue.
+ * Mouvement réduit ou fichier absent : l'image fixe seule. `decorative` : aria-hidden, image sans alt.
  */
 export function BoucleVideo({ video, poster, alt, sizes, pause, lecture, decorative = false, className = "" }: {
   video: string | null; poster: string; alt: string; sizes: string; pause: string; lecture: string; decorative?: boolean; className?: string;
 }) {
   const reduit = useMouvementReduit();
-  const monte = useMonte();
+  const { entree } = useSite();
+  const cadre = useRef<HTMLDivElement>(null);
   const ref = useRef<HTMLVideoElement>(null);
-  const [enPause, setEnPause] = useState(false);   // pause demandée par le visiteur
+  const [proche, setProche] = useState(false);       // le bloc approche de la fenêtre
+  const [lue, setLue] = useState(false);             // première image affichée : fondu
+  const [enPause, setEnPause] = useState(false);     // pause demandée par le visiteur
   const voulue = useRef(false);                      // miroir de enPause lisible par l'observateur
 
+  // 1. Approche : un écran de marge, une seule fois.
+  useEffect(() => {
+    const el = cadre.current;
+    if (!el || !video || reduit || !entree) return;
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setProche(true); obs.disconnect(); } }, { rootMargin: "100% 0px" });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [video, reduit, entree]);
+
+  // 2. Lecture quand 30 % visible, pause hors champ.
   useEffect(() => {
     const v = ref.current;
     if (!v) return;
-    // React ne reflète pas l'attribut `muted` : sans la propriété, Chrome refuse la lecture automatique
-    // (politique d'autoplay) et la vignette reste figée ou vide. On la pose avant toute lecture.
+    // React ne reflète pas l'attribut `muted` : sans la propriété, Chrome refuse la lecture automatique.
     v.muted = true;
     v.defaultMuted = true;
     const obs = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting && !voulue.current) v.play().catch(() => { /* lecture refusée : le poster reste */ });
+      if (e.isIntersecting && !voulue.current) v.play().catch(() => { /* lecture refusée : l'image reste */ });
       else v.pause();
     }, { threshold: 0.3 });
     obs.observe(v);
     return () => obs.disconnect();
-  }, [video, reduit, monte]);
+  }, [proche]);
 
   const basculer = () => {
     const v = ref.current;
@@ -127,11 +141,14 @@ export function BoucleVideo({ video, poster, alt, sizes, pause, lecture, decorat
     setEnPause(!enPause);
   };
 
+  const active = !!video && proche && !reduit;
   return (
-    <div className={`media ${className}`}>
-      {video && monte && !reduit ? (
+    <div ref={cadre} className={`media ${className}`}>
+      <Image src={poster} alt={decorative ? "" : alt} fill sizes={sizes} />
+      {active && (
         <>
-          <video ref={ref} src={video} poster={poster} muted loop playsInline preload="auto"
+          <video ref={ref} src={video} muted loop playsInline preload="auto" data-lue={lue || undefined}
+            onPlaying={() => setLue(true)}
             aria-hidden={decorative || undefined} aria-label={decorative ? undefined : alt} />
           <button type="button" className="media-pause" onClick={basculer} aria-label={enPause ? lecture : pause}>
             {enPause ? (
@@ -141,8 +158,6 @@ export function BoucleVideo({ video, poster, alt, sizes, pause, lecture, decorat
             )}
           </button>
         </>
-      ) : (
-        <Image src={poster} alt={decorative ? "" : alt} fill sizes={sizes} />
       )}
     </div>
   );
