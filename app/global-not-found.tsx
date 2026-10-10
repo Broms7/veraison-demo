@@ -2,6 +2,7 @@
 // Elle court-circuite le layout : charte appliquée ici même (globals.css + polices), page bilingue.
 import type { Metadata } from "next";
 import "./globals.css";
+import Link from "next/link";
 import { classesPolices } from "@/lib/polices";
 
 export const metadata: Metadata = { title: "Page introuvable · Page not found · Clos Ferrugine" };
@@ -16,8 +17,8 @@ export default function GlobalNotFound() {
           <p>Cette page n&apos;existe pas. Le domaine est par ici :</p>
           <p lang="en">This page does not exist. The estate is this way:</p>
           <nav aria-label="Langue · Language">
-            <a className="btn" href="/fr">Véraison, en français</a>
-            <a className="btn btn-secondaire" href="/en" lang="en">Véraison, in English</a>
+            <Link className="btn" href="/fr">Véraison, en français</Link>
+            <Link className="btn btn-secondaire" href="/en" lang="en">Véraison, in English</Link>
           </nav>
         </main>
       </body>
