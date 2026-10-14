@@ -1,4 +1,4 @@
-// components/chapitres/Presse.tsx — XI. La presse (addendum §2). Contenu dans les colonnes 1–2 ;
+// components/chapitres/Presse.tsx — X. La presse (addendum §2). Contenu dans les colonnes 1–2 ;
 // la bouteille tient la colonne de droite. Mention de fiction DIRECTEMENT sous le titre (jamais en bas
 // de page). Pas de compteur sur les notes : une note se lit, elle ne se regarde pas monter.
 import { Chapitre, Surtitre } from "./Chapitre";
@@ -6,14 +6,14 @@ import type { PoseChapitre } from "@/lib/poses";
 import type { Dictionnaire } from "@/dictionnaires";
 
 // Écart assumé à l'addendum (retour de Romain, phase 3) : la bouteille ne descend plus sous ~55 % de
-// l'écran hors frise et slot. Au lieu de tenir la petite pose de X (gens du Clos, bouteille effacée), elle remonte en grand dans la marge.
+// l'écran hors frise et slot. Au lieu de tenir la petite pose de IX (millésimes), elle remonte en grand dans la marge.
 const POSE: PoseChapitre = { x: 0.33, y: 0.02, r: 0, ry: 360, s: 0.8, label: 3 };
 
 export function Presse({ t }: { t: Dictionnaire["presse"] }) {
   return (
-    <Chapitre id="presse" folio="XI" pose={POSE} registre className="presse">
+    <Chapitre id="presse" folio="X" pose={POSE} registre className="presse">
       <div className="presse-col feuille">
-        <Surtitre folio="XI">{t.surtitre}</Surtitre>
+        <Surtitre folio="X">{t.surtitre}</Surtitre>
         <h2 className="titre">{t.titreAvant}<span className="vin">{t.titreAccent}</span></h2>
         <p className="mono fiction">{t.mention}</p>
         <div className="critiques">

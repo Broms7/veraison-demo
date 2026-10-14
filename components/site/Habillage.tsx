@@ -4,7 +4,7 @@
 // avant que la porte s'ouvre. Un seul effet, tout est nettoyé au démontage (gsap.context + observateurs).
 //   1. Tracés au trait : svg[data-trace="scrub"] liés au scroll (réversibles), "once" déclenchés à 60 %.
 //   2. Compteurs [data-compte] (number ticker), jauges [data-jauges], filets de registre, bandeau en pause hors champ.
-//   3. Transitions scrubbées : iris bordeaux (VII), rideau latéral (VIII), rideau bordeaux (X, manifeste).
+//   3. Transitions scrubbées : iris bordeaux (VII), rideau latéral (VIII), rideau bordeaux (XII, manifeste).
 //   4. VIII épinglé à défilement horizontal (≥ 1024 px, sans mouvement réduit), accrochage par mois via Lenis.
 //   5. Citation de Claire révélée ligne par ligne.
 // Mouvement réduit : dessins complets, valeurs finales, aucune découpe, rangée native (CSS).

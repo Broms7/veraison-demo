@@ -24,9 +24,9 @@ function Objet({ id }: { id: string }) {
 export function Allocation({ t, langue }: { t: Dictionnaire["allocation"]; langue: Langue }) {
   const prix = new Intl.NumberFormat(langue === "fr" ? "fr-FR" : "en-GB", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
   return (
-    <Chapitre id="allocation" folio="XII" pose={POSE} registre className="allocation">
+    <Chapitre id="allocation" folio="XI" pose={POSE} registre className="allocation">
       <div className="feuille">
-        <Surtitre folio="XII">{t.surtitre}</Surtitre>
+        <Surtitre folio="XI">{t.surtitre}</Surtitre>
         <h2 className="titre">{t.titreAvant}<span className="vin">{t.titreAccent}</span></h2>
       </div>
       <div className="formats">

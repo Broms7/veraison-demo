@@ -1,6 +1,7 @@
-// components/chapitres/Equipe.tsx — X. Les gens du Clos (addendum §2).
+// components/chapitres/Equipe.tsx — XII. Les gens du Clos (addendum §2).
 // Partie 1 : manifeste de Claire sur fond bordeaux, arrivé par un rideau qui tombe (Habillage.tsx).
-// La bouteille s'est effacée (pose o: 0) : rien entre le lecteur et Claire.
+// Placé après XI : la bouteille reste rangée dans le slot de l'allocation (pose dock) et sort de l'écran
+// avec lui. Rien entre le lecteur et Claire, sans fondu au-dessus d'un slot encore visible.
 // Partie 2 : l'équipe en grille asymétrique de 12 colonnes ; l'équipe de vendange n'a pas de portrait
 // (rendu IA peu fiable sur quatorze visages) : la cagette T10 au trait la remplace.
 // Portrait absent du disque → emplacement hachuré, jamais d'image de banque.
@@ -10,11 +11,11 @@ import { Cagette } from "@/components/illustrations/Traits";
 import type { PoseChapitre } from "@/lib/poses";
 import type { Dictionnaire } from "@/dictionnaires";
 
-const POSE: PoseChapitre = { x: 0, y: 0.36, r: 90, ry: 360, s: 0.4, label: 3, o: 0 };
+const POSE: PoseChapitre = { dock: true };
 
 export function Equipe({ t, portraits }: { t: Dictionnaire["equipe"]; portraits: Record<string, string | null> }) {
   return (
-    <Chapitre id="equipe" folio="X" pose={POSE} className="equipe">
+    <Chapitre id="equipe" folio="XII" pose={POSE} className="equipe">
       <div className="manifeste" data-sombre="">
         <blockquote>
           <p><span className="gm" aria-hidden="true">« </span>{t.citation}<span className="gm" aria-hidden="true"> »</span></p>
@@ -23,7 +24,7 @@ export function Equipe({ t, portraits }: { t: Dictionnaire["equipe"]; portraits:
       </div>
       <div className="equipe-corps">
         <div className="feuille">
-          <Surtitre folio="X">{t.surtitre}</Surtitre>
+          <Surtitre folio="XII">{t.surtitre}</Surtitre>
           <h2 className="titre">{t.titreAvant}<span className="vin">{t.titreAccent}</span></h2>
           <p className="chapeau">{t.chapeau}</p>
         </div>

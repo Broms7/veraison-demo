@@ -61,7 +61,7 @@ export function Tiroir({ declencheur, titre, texte, classeDeclencheur = "lien", 
 }
 
 /** Fiche d'un millésime (addendum §2, IX) : photo 4:5, année, statut + stock, météo, dégustation.
- *  Pour la 2021 (`allocation`), un lien ferme la fiche et défile jusqu'à l'allocation (XII). */
+ *  Pour la 2021 (`allocation`), un lien ferme la fiche et défile jusqu'à l'allocation (XI). */
 interface AnneeFiche { annee: string; statut: string; stock: string; meteo: string; degustation: string; alt: string }
 export function FicheMillesime({ a, photo, t, declencheur, classeDeclencheur, allocation = false }: {
   a: AnneeFiche; photo: string | null; declencheur: ReactNode; classeDeclencheur: string; allocation?: boolean;
