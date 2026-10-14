@@ -1,4 +1,4 @@
-// components/chapitres/Millesimes.tsx — X. Les millésimes : relevés au trait des années passées,
+// components/chapitres/Millesimes.tsx — IX. Les millésimes : relevés au trait des années passées,
 // la 2021 (la bouteille 3D) se range au bout de la lignée. Pas d'épinglage ;
 // défilement horizontal natif à aimantation sur mobile. Chaque année ouvre une fiche (Sheet) enrichie :
 // photo 4:5, statut + stock, météo, dégustation (addendum §2). La 2021 a sa fiche via le lien sous la frise.
@@ -15,9 +15,9 @@ export function Millesimes({ t, photos }: { t: Dictionnaire["millesimes"]; photo
   const sortie = t.annees.find((a) => a.etat === "allocation");
   const libelles = { fermer: t.fermer, meteo: t.meteo, degustation: t.degustation, voirAllocation: t.voirAllocation };
   return (
-    <Chapitre id="millesimes" folio="X" pose={POSE} className="millesimes">
+    <Chapitre id="millesimes" folio="IX" pose={POSE} className="millesimes">
       <div className="feuille">
-        <Surtitre folio="X">{t.surtitre}</Surtitre>
+        <Surtitre folio="IX">{t.surtitre}</Surtitre>
         <h2 className="titre">{t.titreAvant}<br />{t.titreMilieu}<span className="vin">{t.titreAccent}</span></h2>
         <div className="lignee" data-trace-releves="">
           {passees.map((a) => (

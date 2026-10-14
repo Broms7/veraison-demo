@@ -34,7 +34,7 @@ const siPresent = (chemin: string) => (fs.existsSync(path.join(process.cwd(), "p
 const MODELE = siPresent("/models/bouteille.glb");                 // sinon bouteille procédurale
 const VIDEO_CLAIRE = siPresent("/visuels/claire-geste.mp4");       // sinon image fixe
 const VIDEO_PLATEAU = siPresent("/visuels/plateau-aube-1600.mp4"); // sinon image fixe
-// Portraits (IX) et photos de millésimes (X) : emplacement hachuré tant que le WebP n'est pas posé.
+// Portraits (X) et photos de millésimes (IX) : emplacement hachuré tant que le WebP n'est pas posé.
 const PORTRAITS = Object.fromEntries(["equipe-claire", "equipe-paul", "equipe-joaquim", "equipe-odile"].map((n) => [n, siPresent(`/visuels/${n}.webp`)]));
 const PHOTOS_MILLESIMES = Object.fromEntries(["2016", "2017", "2018", "2019", "2020", "2021"].map((a) => [a, siPresent(`/visuels/millesime-${a}.webp`)]));
 
@@ -72,8 +72,8 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
           <ATable t={t.table} />
           <Domaine t={t.domaine} video={VIDEO_PLATEAU} tv={t.video} langue={lang} />
           <Annee t={t.annee} />
-          <Equipe t={t.equipe} portraits={PORTRAITS} />
           <Millesimes t={t.millesimes} photos={PHOTOS_MILLESIMES} />
+          <Equipe t={t.equipe} portraits={PORTRAITS} />
           <Presse t={t.presse} />
           <Allocation t={t.allocation} langue={lang} />
           <Reservation t={t.resa} langue={lang} />

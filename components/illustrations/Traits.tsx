@@ -229,7 +229,7 @@ const T9 = () => {
   );
 };
 
-/** T10 · Cagette de 12 kg (septembre, réutilisée en IX) : caisse, grappes, « 12 kg ». */
+/** T10 · Cagette de 12 kg (septembre, réutilisée en X) : caisse, grappes, « 12 kg ». */
 export const Cagette = ({ taille }: { taille?: number }) => (
   <Objet taille={taille}>
     <g data-o="0">

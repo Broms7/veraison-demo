@@ -15,7 +15,7 @@ const POSE: PoseChapitre = { x: 0, y: 0.36, r: 90, ry: 360, s: 0.4, label: 3, pi
 export function Annee({ t }: { t: Dictionnaire["annee"] }) {
   return (
     <Chapitre id="annee" folio="VIII" pose={POSE} className="annee-ch">
-      <a className="evite" href="#equipe">{t.evitement}</a>
+      <a className="evite" href="#millesimes">{t.evitement}</a>
       <div className="collant">
         {/* Bord d'attaque du rideau latéral (filet bordeaux de la largeur du cadre) */}
         <div className="bord-rideau" aria-hidden="true" />

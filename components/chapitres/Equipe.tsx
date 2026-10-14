@@ -1,4 +1,4 @@
-// components/chapitres/Equipe.tsx — IX. Les gens du Clos (addendum §2).
+// components/chapitres/Equipe.tsx — X. Les gens du Clos (addendum §2).
 // Partie 1 : manifeste de Claire sur fond bordeaux, arrivé par un rideau qui tombe (Habillage.tsx).
 // La bouteille s'est effacée (pose o: 0) : rien entre le lecteur et Claire.
 // Partie 2 : l'équipe en grille asymétrique de 12 colonnes ; l'équipe de vendange n'a pas de portrait
@@ -14,7 +14,7 @@ const POSE: PoseChapitre = { x: 0, y: 0.36, r: 90, ry: 360, s: 0.4, label: 3, o:
 
 export function Equipe({ t, portraits }: { t: Dictionnaire["equipe"]; portraits: Record<string, string | null> }) {
   return (
-    <Chapitre id="equipe" folio="IX" pose={POSE} className="equipe">
+    <Chapitre id="equipe" folio="X" pose={POSE} className="equipe">
       <div className="manifeste" data-sombre="">
         <blockquote>
           <p><span className="gm" aria-hidden="true">« </span>{t.citation}<span className="gm" aria-hidden="true"> »</span></p>
@@ -23,7 +23,7 @@ export function Equipe({ t, portraits }: { t: Dictionnaire["equipe"]; portraits:
       </div>
       <div className="equipe-corps">
         <div className="feuille">
-          <Surtitre folio="IX">{t.surtitre}</Surtitre>
+          <Surtitre folio="X">{t.surtitre}</Surtitre>
           <h2 className="titre">{t.titreAvant}<span className="vin">{t.titreAccent}</span></h2>
           <p className="chapeau">{t.chapeau}</p>
         </div>
